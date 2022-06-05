@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2B0C6F),
+      backgroundColor: const Color(0xFF4d047d),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Image.asset(
               "assets/logo.png",
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Image.asset(
