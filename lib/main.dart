@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:deeze_app/screens/splashScreen.dart';
+import 'package:deeze_app/screens/dashboard/dashboard.dart';
+import 'package:deeze_app/screens/splash.dart';
+import 'package:deeze_app/screens/wallpapers/wallpapers.dart';
 import 'package:flutter/material.dart';
+
+import 'screens/categories/categories.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,9 +25,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: Wallpaers(),
     );
   }
 }

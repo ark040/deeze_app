@@ -1,15 +1,15 @@
-import 'package:deeze_app/screens/login.dart';
-import 'package:deeze_app/screens/profile.dart';
+import 'package:deeze_app/screens/auth/login.dart';
+import 'package:deeze_app/screens/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+class Onboarding extends StatefulWidget {
+  Onboarding({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Onboarding> createState() => _OnboardingState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _OnboardingState extends State<Onboarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => Profile(),
+                    builder: (_) => Dashbaord(),
                   ),
                 );
               },
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => Profile(),
+                    builder: (_) => const Dashbaord(),
                   ),
                 );
               },
@@ -95,11 +95,11 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (_) => Profile(),
+                    builder: (_) => const Dashbaord(),
                   ),
                 );
               },
-              child: Text(
+              child: const Text(
                 "New Here? Sign Up >",
                 style: TextStyle(
                   color: Colors.white,

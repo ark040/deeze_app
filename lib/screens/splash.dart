@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:deeze_app/screens/homePage.dart';
 import 'package:flutter/material.dart';
+
+import 'screens.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => HomePage(),
+          builder: (_) => Onboarding(),
         ),
       );
     });
