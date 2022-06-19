@@ -1,8 +1,9 @@
-import 'package:deeze_app/widgets/category_card.dart';
+import 'package:deeze_app/bloc/deeze_bloc/bloc/category_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../bloc/deeze_bloc/deeze_bloc.dart';
+import '../../bloc/deeze_bloc/deeze_state.dart';
 import '../../widgets/widgets.dart';
 
 class Categories extends StatefulWidget {
@@ -13,6 +14,13 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<CategoryBloc>().add(LoadCategory());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -313,9 +321,9 @@ class _CategoriesState extends State<Categories> {
           elevation: 0,
           centerTitle: true,
           title: Text("Categories"),
-          actions: [
+          actions: const [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: EdgeInsets.symmetric(horizontal: 15),
               child: Icon(Icons.search),
             )
           ],
@@ -368,15 +376,33 @@ class _CategoriesState extends State<Categories> {
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-            child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 200,
-                    childAspectRatio: 3 / 1.2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20),
-                itemBuilder: (context, index) {
-                  return CategoryCard();
-                }),
+            child: BlocConsumer<CategoryBloc, CategoryState>(
+              listener: (context, state) {
+                // TODO: implement listener
+              },
+              builder: (context, state) {
+                if (state is CategoryInitial) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is LoadedCategory) {
+                  return GridView.builder(
+                      itemCount: state.categories?.hydraMember?.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 200,
+                              childAspectRatio: 3 / 1.2,
+                              crossAxisSpacing: 20,
+                              mainAxisSpacing: 20),
+                      itemBuilder: (context, index) {
+                        return CategoryCard(
+                          image: state.categories?.hydraMember?[index].image,
+                          name: state.categories?.hydraMember?[index].name,
+                        );
+                      });
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
           ),
         ),
       ),

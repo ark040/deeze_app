@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:deeze_app/bloc/deeze_bloc/bloc/category_bloc.dart';
 import 'package:deeze_app/screens/dashboard/dashboard.dart';
-import 'package:deeze_app/screens/splash.dart';
-import 'package:deeze_app/screens/wallpapers/wallpapers.dart';
+import 'package:deeze_app/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'screens/categories/categories.dart';
+import 'bloc/deeze_bloc/deeze_bloc.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,9 +26,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Wallpaers(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<DeezeBloc>(
+          create: (BuildContext context) => DeezeBloc(),
+        ),
+        BlocProvider<CategoryBloc>(
+          create: (BuildContext context) => CategoryBloc(),
+        ),
+      ],
+      child:
+          MaterialApp(debugShowCheckedModeBanner: false, home: SplashScreen()),
     );
   }
 }

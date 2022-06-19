@@ -36,6 +36,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   connectivity_plus: ^2.3.0
   internet_connection_checker: ^0.0.1+4
+  bloc: ^8.0.3
+  http: ^0.13.4
+  flutter_bloc: ^8.0.1
+  transparent_image:
+  carousel_slider: ^4.1.1
+  audioplayers: 0.20.1
+  ringtone_set: ^0.0.2
 
 dev_dependencies:
   flutter_test:

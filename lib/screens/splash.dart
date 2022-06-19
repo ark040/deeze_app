@@ -18,7 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => Onboarding(),
+          builder: (_) => const Dashbaord(
+            type: "RINGTONE",
+          ),
         ),
       );
     });

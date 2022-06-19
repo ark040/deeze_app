@@ -48,11 +48,11 @@ class _OnboardingState extends State<Onboarding> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => Dashbaord(),
-                  ),
-                );
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (_) => Dashbaord(),
+                //   ),
+                // );
               },
               child: Image.asset(
                 "assets/google.png",
@@ -63,11 +63,11 @@ class _OnboardingState extends State<Onboarding> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => const Dashbaord(),
-                  ),
-                );
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (_) => const Dashbaord(),
+                //   ),
+                // );
               },
               child: Image.asset(
                 "assets/facebook.png",
@@ -93,11 +93,11 @@ class _OnboardingState extends State<Onboarding> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (_) => const Dashbaord(),
-                  ),
-                );
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (_) => const Dashbaord(),
+                //   ),
+                // );
               },
               child: const Text(
                 "New Here? Sign Up >",

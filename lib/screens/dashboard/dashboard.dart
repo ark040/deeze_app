@@ -1,15 +1,39 @@
+import 'package:deeze_app/bloc/deeze_bloc/bloc/category_bloc.dart';
+import 'package:deeze_app/bloc/deeze_bloc/deeze_bloc.dart';
+import 'package:deeze_app/screens/categories/categories.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/deeze_bloc/deeze_event.dart';
+import '../../bloc/deeze_bloc/deeze_state.dart';
 import '../../widgets/widgets.dart';
 import '../../widgets/drawer_header.dart';
+import '../wallpapers/wallpapers.dart';
 
 class Dashbaord extends StatefulWidget {
-  const Dashbaord({Key? key}) : super(key: key);
+  final String type;
+  const Dashbaord({Key? key, required this.type}) : super(key: key);
 
   @override
   State<Dashbaord> createState() => _DashbaordState();
 }
 
 class _DashbaordState extends State<Dashbaord> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<DeezeBloc>().add(LoadDeeze(widget.type));
+    context.read<CategoryBloc>().add(LoadCategory());
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    context.read<DeezeBloc>().close();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -66,114 +90,164 @@ class _DashbaordState extends State<Dashbaord> {
                   Color(0xFF000000),
                 ]),
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 17),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Categories",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
+          child: BlocConsumer<DeezeBloc, DeezeState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              if (state is LoadingDeeze) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state is LoadedDeeze) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 17),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    Row(
-                      children: const [
-                        Text(
-                          "View All",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Icon(
-                          Icons.arrow_right,
-                          color: Colors.white,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 75,
-                  width: screenWidth,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return const Padding(
-                        padding: EdgeInsets.only(right: 15),
-                        child: CategoryCard(),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  "Popular",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                SizedBox(
-                  height: 33,
-                  width: screenWidth,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: Container(
-                          width: screenWidth * 0.3,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            "Love",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Categories",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,
-                              fontWeight: FontWeight.w500,
                             ),
                           ),
+                          GestureDetector(
+                            onTap: (() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Categories()));
+                            }),
+                            child: Row(
+                              children: const [
+                                Text(
+                                  "View All",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        height: 75,
+                        width: screenWidth,
+                        child: BlocConsumer<CategoryBloc, CategoryState>(
+                          listener: (context, state) {
+                            // TODO: implement listener
+                          },
+                          builder: (context, state) {
+                            if (state is CategoryInitial) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state is LoadedCategory) {
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    state.categories?.hydraMember?.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 15),
+                                    child: CategoryCard(
+                                      image: state.categories
+                                          ?.hydraMember?[index].image,
+                                      name: state
+                                          .categories?.hydraMember?[index].name,
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const Text(
+                        "Popular",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      SizedBox(
+                        height: 33,
+                        width: screenWidth,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: Container(
+                                width: screenWidth * 0.3,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  "Love",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: state.deeze?.hydraMember?.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            return RingtonesCard(
+                              index: index,
+                              listHydra: state.deeze!.hydraMember!,
+                              ringtoneName:
+                                  state.deeze!.hydraMember![index].name!,
+                              file: state.deeze!.hydraMember![index].file!,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) {
-                      return RingtonesCard();
-                    },
-                  ),
-                ),
-              ],
-            ),
+                );
+              }
+              return const Center(child: CircularProgressIndicator());
+            },
           ),
         ),
         drawer: Drawer(
@@ -192,61 +266,87 @@ class _DashbaordState extends State<Dashbaord> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/ringtone.png",
-                            color: Colors.white,
-                            fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const Dashbaord(
+                      //       type: "RINGTONE",
+                      //     ),
+                      //   ),
+                      // );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            height: 25,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/ringtone.png",
+                              color: Colors.white,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 26,
-                        ),
-                        const Text(
-                          "Ringtones",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                          const SizedBox(
+                            width: 26,
                           ),
-                        ),
-                      ],
+                          const Text(
+                            "Ringtones",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
                     height: 25,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/wallpapers.png",
-                            color: Colors.white,
-                            fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WallPapers(
+                            type: "WALLPAPER",
                           ),
                         ),
-                        const SizedBox(
-                          width: 26,
-                        ),
-                        const Text(
-                          "Wallpapers",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            height: 25,
+                            width: 30,
+                            child: Image.asset(
+                              "assets/wallpapers.png",
+                              color: Colors.white,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 26,
+                          ),
+                          const Text(
+                            "Wallpapers",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
