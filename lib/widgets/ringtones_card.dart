@@ -1,5 +1,6 @@
 import 'package:deeze_app/widgets/audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../models/deeze_model.dart';
 
@@ -22,12 +23,14 @@ class RingtonesCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CustomAudioPlayer(
-                      listHydra: listHydra,
-                      index: index,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomAudioPlayer(
+              listHydra: listHydra,
+              index: index,
+            ),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
@@ -35,12 +38,15 @@ class RingtonesCard extends StatelessWidget {
             height: 65,
             width: screenWidth,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [
-                Color(0xFF279A88),
-                Color(0xFF737B64),
-                Color(0xFF4F4C7E),
-                Color(0xFF4F4C7E),
-              ]),
+              gradient: const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xFF279A88),
+                    Color(0xFF737B64),
+                    Color(0xFF4F4C7E),
+                    Color(0xFF4F4C7E),
+                  ]),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
@@ -66,9 +72,10 @@ class RingtonesCard extends StatelessWidget {
                       ),
                       Text(
                         ringtoneName,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
                           color: Colors.white,
+                          fontSize: 18,
                         ),
                       ),
                     ],

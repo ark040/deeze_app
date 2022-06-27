@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deeze_app/bloc/deeze_bloc/wallpaper_bloc/wallpaper_bloc.dart';
 import 'package:deeze_app/screens/tags/tags.dart';
+import 'package:deeze_app/screens/wallpapers/wallpapers.dart';
 import 'package:deeze_app/widgets/single_wallpaper.dart';
-import 'package:deeze_app/widgets/wallpaper_category_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -21,19 +21,21 @@ import 'dart:convert';
 
 import '../search/search_screen.dart';
 
-class WallPapers extends StatefulWidget {
+class WallpaperByCategory extends StatefulWidget {
   final String type;
-  const WallPapers({Key? key, required this.type}) : super(key: key);
+  final int id;
+  const WallpaperByCategory({Key? key, required this.type, required this.id})
+      : super(key: key);
 
   @override
-  State<WallPapers> createState() => _WallPapersState();
+  State<WallpaperByCategory> createState() => _WallpaperByCategoryState();
 }
 
-class _WallPapersState extends State<WallPapers> {
+class _WallpaperByCategoryState extends State<WallpaperByCategory> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // context.read<WallpaperBloc>().add(LoadWallpapers());
+    // context.read<WallpaperBloc>().add(LoadWallpaperByCategory());
     context.read<CategoryBloc>().add(LoadCategory());
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) => loadData());
   }
@@ -53,7 +55,7 @@ class _WallPapersState extends State<WallPapers> {
       RefreshController(initialRefresh: true);
 
   List<HydraMember> hydraMember = [];
-  Future<bool> fetchWallpapers({bool isRefresh = false}) async {
+  Future<bool> fetchWallpaperByCategory({bool isRefresh = false}) async {
     if (isRefresh) {
       page = 1;
     } else {
@@ -69,6 +71,7 @@ class _WallPapersState extends State<WallPapers> {
       "page": "$page",
       "itemsPerPage": "10",
       "enabled": "true",
+      "categories.id": "${widget.id}",
       "type": "WALLPAPER"
     });
     try {
@@ -269,107 +272,6 @@ class _WallPapersState extends State<WallPapers> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Categories",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Categories(
-                                              isRingtone: false,
-                                            )));
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "View All",
-                                    style: GoogleFonts.archivo(
-                                      fontStyle: FontStyle.normal,
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 75,
-                          width: screenWidth,
-                          child: BlocConsumer<CategoryBloc, CategoryState>(
-                            listener: (context, state) {
-                              // TODO: implement listener
-                            },
-                            builder: (context, state) {
-                              if (state is CategoryInitial) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              if (state is LoadedCategory) {
-                                return ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 4,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 15),
-                                      child: WallpaperCategoryCard(
-                                        id: state.categories!
-                                            .hydraMember![index].id!,
-                                        image: state.categories
-                                            ?.hydraMember?[index].image,
-                                        name: state.categories
-                                            ?.hydraMember?[index].name,
-                                      ),
-                                    );
-                                  },
-                                );
-                              }
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Popular",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(height: 33, width: screenWidth, child: Tags()),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 5),
@@ -377,8 +279,8 @@ class _WallPapersState extends State<WallPapers> {
                               enablePullUp: true,
                               controller: _refreshController,
                               onRefresh: () async {
-                                final result =
-                                    await fetchWallpapers(isRefresh: true);
+                                final result = await fetchWallpaperByCategory(
+                                    isRefresh: true);
                                 if (result) {
                                   _refreshController.refreshCompleted();
                                 } else {
@@ -386,7 +288,7 @@ class _WallPapersState extends State<WallPapers> {
                                 }
                               },
                               onLoading: () async {
-                                final result = await fetchWallpapers();
+                                final result = await fetchWallpaperByCategory();
                                 if (result) {
                                   _refreshController.loadComplete();
                                 } else {
@@ -475,7 +377,7 @@ class _WallPapersState extends State<WallPapers> {
                               ),
                             ),
                             itemBuilder: (context, HydraMember? suggestion) {
-                              final wallpapers = suggestion!;
+                              final WallpaperByCategory = suggestion!;
                               return GestureDetector(
                                   onTap: (() {
                                     Navigator.push(
@@ -483,15 +385,16 @@ class _WallPapersState extends State<WallPapers> {
                                       MaterialPageRoute(
                                         builder: (context) => SingleWallpaper(
                                           index: 0,
-                                          urlImage: wallpapers.file!,
-                                          userName: wallpapers.user!.firstName!,
+                                          urlImage: WallpaperByCategory.file!,
+                                          userName: WallpaperByCategory
+                                              .user!.firstName!,
                                           userProfileUrl:
-                                              wallpapers.user!.image,
+                                              WallpaperByCategory.user!.image,
                                         ),
                                       ),
                                     );
                                   }),
-                                  child: wallpapers.file == null
+                                  child: WallpaperByCategory.file == null
                                       ? Container(
                                           width: screenWidth * 0.4,
                                           decoration: BoxDecoration(
@@ -511,7 +414,7 @@ class _WallPapersState extends State<WallPapers> {
                                                       horizontal: 10,
                                                       vertical: 10),
                                               child: Text(
-                                                wallpapers.name!,
+                                                WallpaperByCategory.name!,
                                                 style: const TextStyle(
                                                   fontSize: 20,
                                                 ),
@@ -526,7 +429,8 @@ class _WallPapersState extends State<WallPapers> {
                                                 BorderRadius.circular(10),
                                             child: CachedNetworkImage(
                                               fit: BoxFit.cover,
-                                              imageUrl: wallpapers.file!,
+                                              imageUrl:
+                                                  WallpaperByCategory.file!,
                                               placeholder: (context, url) =>
                                                   const Center(
                                                       child:
@@ -609,107 +513,6 @@ class _WallPapersState extends State<WallPapers> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Categories",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const Categories(
-                                              isRingtone: false,
-                                            )));
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "View All",
-                                    style: GoogleFonts.archivo(
-                                      fontStyle: FontStyle.normal,
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 75,
-                          width: screenWidth,
-                          child: BlocConsumer<CategoryBloc, CategoryState>(
-                            listener: (context, state) {
-                              // TODO: implement listener
-                            },
-                            builder: (context, state) {
-                              if (state is CategoryInitial) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              if (state is LoadedCategory) {
-                                return ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 4,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 15),
-                                      child: WallpaperCategoryCard(
-                                        id: state.categories!
-                                            .hydraMember![index].id!,
-                                        image: state.categories
-                                            ?.hydraMember?[index].image,
-                                        name: state.categories
-                                            ?.hydraMember?[index].name,
-                                      ),
-                                    );
-                                  },
-                                );
-                              }
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          "Popular",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.white,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(height: 33, width: screenWidth, child: Tags()),
-                        const SizedBox(
-                          height: 20,
-                        ),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 5),
@@ -717,8 +520,8 @@ class _WallPapersState extends State<WallPapers> {
                               enablePullUp: true,
                               controller: _refreshController,
                               onRefresh: () async {
-                                final result =
-                                    await fetchWallpapers(isRefresh: true);
+                                final result = await fetchWallpaperByCategory(
+                                    isRefresh: true);
                                 if (result) {
                                   _refreshController.refreshCompleted();
                                 } else {
@@ -726,7 +529,7 @@ class _WallPapersState extends State<WallPapers> {
                                 }
                               },
                               onLoading: () async {
-                                final result = await fetchWallpapers();
+                                final result = await fetchWallpaperByCategory();
                                 if (result) {
                                   _refreshController.loadComplete();
                                 } else {
@@ -814,14 +617,14 @@ class _WallPapersState extends State<WallPapers> {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pop();
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const WallPapers(
-                            //       type: "WALLPAPER",
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WallPapers(
+                                  type: "WALLPAPER",
+                                ),
+                              ),
+                            );
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 40),
@@ -836,7 +639,7 @@ class _WallPapersState extends State<WallPapers> {
                                   width: 26,
                                 ),
                                 Text(
-                                  "Wallpapers",
+                                  "WallpaperByCategory",
                                   style: GoogleFonts.archivo(
                                     fontStyle: FontStyle.normal,
                                     color: Colors.white,

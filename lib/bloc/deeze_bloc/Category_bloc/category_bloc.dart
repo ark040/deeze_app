@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:deeze_app/bloc/deeze_bloc/bloc/category_repo.dart';
+import 'package:deeze_app/bloc/deeze_bloc/Category_bloc/category_repo.dart';
+
 import 'package:meta/meta.dart';
 
 import '../../../models/categories.dart';

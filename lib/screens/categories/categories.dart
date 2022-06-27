@@ -1,13 +1,19 @@
-import 'package:deeze_app/bloc/deeze_bloc/bloc/category_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../../bloc/deeze_bloc/deeze_bloc.dart';
-import '../../bloc/deeze_bloc/deeze_state.dart';
+import '../../bloc/deeze_bloc/Category_bloc/category_bloc.dart';
+import '../../bloc/deeze_bloc/ringtone_bloc.dart';
+import '../../bloc/deeze_bloc/ringtone_state.dart';
+import '../../widgets/ringtone_category_card.dart';
+import '../../widgets/wallpaper_category_card.dart';
 import '../../widgets/widgets.dart';
+import '../dashboard/dashboard.dart';
+import '../wallpapers/wallpapers.dart';
 
 class Categories extends StatefulWidget {
-  const Categories({Key? key}) : super(key: key);
+  final bool isRingtone;
+  const Categories({Key? key, required this.isRingtone}) : super(key: key);
 
   @override
   State<Categories> createState() => _CategoriesState();
@@ -41,31 +47,81 @@ class _CategoriesState extends State<Categories> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/ringtone.png",
-                            color: Colors.white,
-                            fit: BoxFit.cover,
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Dashbaord(
+                            type: "RINGTONE",
                           ),
                         ),
-                        const SizedBox(
-                          width: 26,
-                        ),
-                        const Text(
-                          "Ringtones",
-                          style: TextStyle(
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.volume_up,
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                            size: 30,
+                          ),
+                          const SizedBox(
+                            width: 26,
+                          ),
+                          Text(
+                            "Ringtones",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WallPapers(
+                            type: "WALLPAPER",
                           ),
                         ),
-                      ],
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 40),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.wallpaper,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          const SizedBox(
+                            width: 26,
+                          ),
+                          Text(
+                            "Wallpapers",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -75,54 +131,20 @@ class _CategoriesState extends State<Categories> {
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
                       children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/wallpapers.png",
-                            color: Colors.white,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 26,
-                        ),
-                        const Text(
-                          "Wallpapers",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/notification.png",
-                            fit: BoxFit.cover,
-
-                            // color: Colors.white,
-                          ),
+                        const Icon(
+                          Icons.notifications,
+                          color: Colors.amber,
+                          size: 30,
                         ),
                         const SizedBox(
                           width: 20,
                         ),
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             "Notifications",
-                            style: TextStyle(
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -139,21 +161,18 @@ class _CategoriesState extends State<Categories> {
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
                       children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
-                          child: Image.asset(
-                            "assets/heart.png",
-                            fit: BoxFit.cover,
-                            color: Colors.white,
-                          ),
+                        const Icon(
+                          Icons.heart_broken,
+                          color: Colors.white,
+                          size: 30,
                         ),
                         const SizedBox(
                           width: 26,
                         ),
-                        const Text(
+                        Text(
                           "Saved",
-                          style: TextStyle(
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
@@ -176,8 +195,8 @@ class _CategoriesState extends State<Categories> {
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
-                      children: const [
-                        SizedBox(
+                      children: [
+                        const SizedBox(
                           height: 25,
                           width: 30,
                           child: Icon(
@@ -190,7 +209,8 @@ class _CategoriesState extends State<Categories> {
                         ),
                         Text(
                           "Help",
-                          style: TextStyle(
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -205,7 +225,7 @@ class _CategoriesState extends State<Categories> {
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
-                      children: const [
+                      children: [
                         SizedBox(
                           height: 25,
                           width: 30,
@@ -219,7 +239,8 @@ class _CategoriesState extends State<Categories> {
                         ),
                         Text(
                           "Settings",
-                          style: TextStyle(
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -234,8 +255,8 @@ class _CategoriesState extends State<Categories> {
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
-                      children: const [
-                        SizedBox(
+                      children: [
+                        const SizedBox(
                           height: 25,
                           width: 30,
                           child: Icon(
@@ -250,7 +271,8 @@ class _CategoriesState extends State<Categories> {
                           padding: EdgeInsets.all(8.0),
                           child: Text(
                             "Privacy Policy",
-                            style: TextStyle(
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
                               color: Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -300,9 +322,10 @@ class _CategoriesState extends State<Categories> {
                         const SizedBox(
                           width: 26,
                         ),
-                        const Text(
+                        Text(
                           "Join us on Facebook",
-                          style: TextStyle(
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
                             color: Colors.white,
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -367,11 +390,12 @@ class _CategoriesState extends State<Categories> {
                 end: Alignment.bottomCenter,
                 colors: <Color>[
                   Color(0xFF4d047d),
-                  Color(0xFF050000),
-                  Color(0xFF050000),
-                  Color(0xFF050000),
-                  Color(0xFF000000),
-                  Color(0xFF000000),
+                  Color(0xFF17131F),
+                  Color(0xFF17131F),
+                  Color(0xFF17131F),
+                  Color(0xFF17131F),
+                  Color(0xFF17131F),
+                  Color(0xFF17131F),
                 ]),
           ),
           child: Padding(
@@ -394,10 +418,21 @@ class _CategoriesState extends State<Categories> {
                               crossAxisSpacing: 20,
                               mainAxisSpacing: 20),
                       itemBuilder: (context, index) {
-                        return CategoryCard(
-                          image: state.categories?.hydraMember?[index].image,
-                          name: state.categories?.hydraMember?[index].name,
-                        );
+                        return widget.isRingtone
+                            ? RingtoneCategoryCard(
+                                id: state.categories!.hydraMember![index].id!,
+                                image:
+                                    state.categories?.hydraMember?[index].image,
+                                name:
+                                    state.categories?.hydraMember?[index].name,
+                              )
+                            : WallpaperCategoryCard(
+                                id: state.categories!.hydraMember![index].id!,
+                                image:
+                                    state.categories?.hydraMember?[index].image,
+                                name:
+                                    state.categories?.hydraMember?[index].name,
+                              );
                       });
                 }
                 return const Center(child: CircularProgressIndicator());
