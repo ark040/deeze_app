@@ -40,9 +40,20 @@ dependencies:
   http: ^0.13.4
   flutter_bloc: ^8.0.1
   transparent_image:
-  carousel_slider: ^4.1.1
+  carousel_slider:
   audioplayers: 0.20.1
   ringtone_set: ^0.0.2
+  flutter_wallpaper_manager: ^0.0.3
+  dio: ^4.0.6
+  path_provider: ^2.0.11
+  cached_network_image: ^3.2.1
+  google_fonts: ^3.0.1
+  flutter_cache_manager: ^3.3.0
+  ndialog: ^4.1.0
+  flutter_progress_hud: ^2.0.2
+  fluttertoast: ^8.0.1-nullsafety.0
+  pull_to_refresh:
+  flutter_typeahead: ^4.0.0
 
 dev_dependencies:
   flutter_test:

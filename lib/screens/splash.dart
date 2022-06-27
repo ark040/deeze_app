@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:deeze_app/screens/wallpapers/wallpapers.dart';
 import 'package:flutter/material.dart';
 
 import 'screens.dart';
@@ -18,8 +19,8 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const Dashbaord(
-            type: "RINGTONE",
+          builder: (_) => const WallPapers(
+            type: "WALLPAPER",
           ),
         ),
       );

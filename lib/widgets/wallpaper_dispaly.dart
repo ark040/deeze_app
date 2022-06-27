@@ -1,35 +1,35 @@
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ringtone_set/ringtone_set.dart';
 
 import '../models/deeze_model.dart';
-import 'elevated_button_widget.dart';
 
-class CustomAudioPlayer extends StatefulWidget {
-  final List<HydraMember> listHydra;
-  final int index;
-  const CustomAudioPlayer(
-      {Key? key, required this.listHydra, required this.index})
+class WallPaperSlider extends StatefulWidget {
+  final List<HydraMember>? listHydra;
+  final int? index;
+  const WallPaperSlider({Key? key, this.listHydra, this.index})
       : super(key: key);
 
   @override
-  State<CustomAudioPlayer> createState() => _CustomAudioPlayerState();
+  // ignore: library_private_types_in_public_api
+  _WallPaperSliderState createState() => _WallPaperSliderState();
 }
 
-class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
+class _WallPaperSliderState extends State<WallPaperSlider> {
   final CarouselController _controller = CarouselController();
-
+  String file = "";
   animateToSilde(int index) => _controller.animateToPage(
         index,
         duration: Duration(milliseconds: 100),
@@ -40,20 +40,11 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => animateToSilde(widget.index));
+        .addPostFrameCallback((timeStamp) => animateToSilde(widget.index!));
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  String myfile = "";
   @override
   Widget build(BuildContext context) {
-    print(widget.index);
-    animateToSilde(5);
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -71,32 +62,28 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
               ]),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CarouselSlider.builder(
               carouselController: _controller,
-              itemCount: widget.listHydra.length,
+              itemCount: widget.listHydra?.length,
               itemBuilder: (context, index, realIndex) {
-                final file = widget.listHydra[index].file;
-                final name = widget.listHydra[index].name;
-                myfile = index == 0
-                    ? widget.listHydra[0].file!
-                    : widget.listHydra[index - 1].file!;
-                return BuildPlay(
-                  file: file!,
-                  index: index,
-                  name: name!,
-                  userName: widget.listHydra[index].user!.firstName!,
-                  userProfileUrl: widget.listHydra[index].user!.image,
-                );
+                final urlImage = widget.listHydra![index].file!;
+                file = index == 0
+                    ? widget.listHydra![0].file!
+                    : widget.listHydra![index - 1].file!;
+                return buildImage(
+                    urlImage: urlImage,
+                    index: index,
+                    userName: widget.listHydra![index].user!.firstName!,
+                    userProfileUrl: widget.listHydra![index].user!.image);
               },
               options: CarouselOptions(
-                height: 500,
-                pageSnapping: true,
-                initialPage: 0,
-                enlargeCenterPage: true,
+                height: 600,
                 enableInfiniteScroll: false,
+                pageSnapping: true,
+                enlargeCenterPage: true,
               ),
             ),
             Row(
@@ -107,7 +94,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                     showCupertinoModalPopup(
                         context: context,
                         builder: (context) {
-                          return AudioSelectDialog(file: myfile);
+                          return WallpaperSelectDialog(file: file);
                         });
                   },
                   child: const Icon(
@@ -117,7 +104,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                   ),
                 ),
                 const SizedBox(
-                  width: 50,
+                  width: 70,
                 ),
                 Container(
                   height: 37,
@@ -131,7 +118,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                   ),
                 ),
                 const SizedBox(
-                  width: 50,
+                  width: 70,
                 ),
                 const Icon(
                   Icons.share_outlined,
@@ -145,150 +132,44 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
       ),
     );
   }
-}
 
-class BuildPlay extends StatefulWidget {
-  final String file;
-  final String name;
-  final String userName;
-  final String? userProfileUrl;
-  final int index;
-  const BuildPlay(
-      {Key? key,
-      required this.file,
-      required this.name,
-      required this.index,
-      required this.userName,
-      this.userProfileUrl})
-      : super(key: key);
-
-  @override
-  State<BuildPlay> createState() => _BuildPlayState();
-}
-
-class _BuildPlayState extends State<BuildPlay> {
-  final audioPlayer = AudioPlayer();
-
-  bool isPlaying = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    liseten(); // audioPlayer.onDurationChanged.listen((state) {
-    //   setState(() {
-    //     duration = state;
-    //   });
-    // });
-    // audioPlayer.onAudioPositionChanged.listen((state) {
-    //   setState(() {
-    //     position = state;
-    //   });
-    // });
-  }
-
-  void liseten() async {
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.PLAYING;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    audioPlayer.dispose();
-    isPlaying = false;
-    PlayerState.STOPPED;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget buildImage({
+    required String urlImage,
+    required int index,
+    required String userName,
+    String? userProfileUrl,
+  }) {
     return Column(
       children: [
-        Text(
-          widget.name,
-          style: GoogleFonts.archivo(
-            fontStyle: FontStyle.normal,
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(
-          height: 30,
-        ),
         Container(
-          height: 320,
-          width: 280,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  Color(0xFF9f5c96),
-                  Color(0xFF93b1b9),
-                ]),
+          margin: const EdgeInsets.only(right: 10),
+          width: double.infinity,
+          height: 450,
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: (() async {
-                  if (isPlaying) {
-                    await audioPlayer.pause();
-                  } else {
-                    await audioPlayer.play(widget.file);
-                  }
-                }),
-                child: Container(
-                  height: 50,
-                  width: 50,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFa28eac),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow_sharp,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+            child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: urlImage,
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
         ),
-        // Slider(
-        //   min: 0,
-        //   max: duration.inSeconds.toDouble(),
-        //   value: position.inSeconds.toDouble(),
-        //   onChanged: onChanged,
-        // ),
-        // Row(children: [
-        //   Text(formatTime())
-        // ],)
         const SizedBox(
           height: 20,
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  widget.userProfileUrl != null
+                  userProfileUrl != null
                       ? CircleAvatar(
                           radius: 15,
-                          backgroundImage: NetworkImage(widget.userProfileUrl!),
+                          backgroundImage: NetworkImage(userProfileUrl),
                         )
                       : const CircleAvatar(
                           backgroundColor: Colors.grey,
@@ -298,7 +179,7 @@ class _BuildPlayState extends State<BuildPlay> {
                     width: 10,
                   ),
                   Text(
-                    widget.userName,
+                    userName,
                     style: GoogleFonts.archivo(
                       fontStyle: FontStyle.normal,
                       color: Colors.white,
@@ -333,26 +214,41 @@ class _BuildPlayState extends State<BuildPlay> {
   }
 }
 
-class AudioSelectDialog extends StatefulWidget {
+class WallpaperSelectDialog extends StatefulWidget {
   final String file;
-  const AudioSelectDialog({Key? key, required this.file}) : super(key: key);
+  const WallpaperSelectDialog({Key? key, required this.file}) : super(key: key);
 
   @override
-  State<AudioSelectDialog> createState() => _AudioSelectDialogState();
+  State<WallpaperSelectDialog> createState() => _WallpaperSelectDialogState();
 }
 
-class _AudioSelectDialogState extends State<AudioSelectDialog> {
+class _WallpaperSelectDialogState extends State<WallpaperSelectDialog> {
   @override
   void initState() {
     super.initState();
     initPlatformState();
   }
 
+  bool isloading = false;
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {}
+  Future<bool> setWallpaper() async {
+    try {
+      String url = widget.file;
+      int location = WallpaperManager
+          .HOME_SCREEN; // or location = WallpaperManager.LOCK_SCREEN;
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+          await WallpaperManager.setWallpaperFromFile(file.path, location);
+      return result;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   Future<bool> downloadFile(String url) async {
     final appStorage = await getApplicationDocumentsDirectory();
-    final file = File("${appStorage.path}/video.mp3");
+    final file = File("${appStorage.path}/wallpaper.png");
     try {
       final response = await Dio().get(url,
           options: Options(
@@ -364,6 +260,34 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
       raf.close();
       return true;
     } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> setLockWallpaper() async {
+    try {
+      String url = widget.file;
+      int location = WallpaperManager
+          .LOCK_SCREEN; // or location = WallpaperManager.LOCK_SCREEN;
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+          await WallpaperManager.setWallpaperFromFile(file.path, location);
+      return result;
+    } on PlatformException {
+      return false;
+    }
+  }
+
+  Future<bool> setBothScreenWallpaper() async {
+    try {
+      String url = widget.file;
+      int location = WallpaperManager
+          .BOTH_SCREEN; // or location = WallpaperManager.LOCK_SCREEN;
+      var file = await DefaultCacheManager().getSingleFile(url);
+      final bool result =
+          await WallpaperManager.setWallpaperFromFile(file.path, location);
+      return result;
+    } on PlatformException {
       return false;
     }
   }
@@ -395,7 +319,6 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      bool success = false;
                       ProgressDialog pd = ProgressDialog(
                         context,
                         message: Text(
@@ -407,28 +330,24 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                         ),
                       );
                       pd.show();
-                      try {
-                        success = await RingtoneSet.setRingtoneFromNetwork(
-                            widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content: Text("Ringtone set successfully!"),
+                      final isSucces = await setWallpaper();
+                      if (isSucces) {
+                        Fluttertoast.showToast(
+                          msg: "Wallpaper succesfully Updated!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: const Color(0xFF7209b7),
+                          textColor: Colors.white,
+                          fontSize: 16.0,
                         );
                         Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                     child: Row(
                       children: [
                         const Icon(
-                          Icons.call_end_sharp,
+                          Icons.wallpaper,
                           color: Colors.black,
                           size: 25,
                         ),
@@ -436,7 +355,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                           width: 20,
                         ),
                         Text(
-                          "SET RINGTONE",
+                          "SET WALLPAPER",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.black,
@@ -452,7 +371,6 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      bool success = false;
                       ProgressDialog pd = ProgressDialog(
                         context,
                         message: Text(
@@ -464,29 +382,24 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                         ),
                       );
                       pd.show();
-                      try {
-                        success = await RingtoneSet.setNotificationFromNetwork(
-                            widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content:
-                              Text("Notifications sound  set successfully!"),
+                      final isSucces = await setLockWallpaper();
+                      if (isSucces) {
+                        Fluttertoast.showToast(
+                          msg: "Wallpaper succesfully Updated!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: const Color(0xFF7209b7),
+                          textColor: Colors.white,
+                          fontSize: 16.0,
                         );
                         Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                     child: Row(
                       children: [
                         const Icon(
-                          Icons.notifications,
+                          Icons.lock,
                           color: Colors.black,
                           size: 25,
                         ),
@@ -494,7 +407,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                           width: 20,
                         ),
                         Text(
-                          "SET NOTIFICATION",
+                          "SET LOCK SCREEN",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.black,
@@ -510,7 +423,6 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      bool success = false;
                       ProgressDialog pd = ProgressDialog(
                         context,
                         message: Text(
@@ -522,28 +434,24 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                         ),
                       );
                       pd.show();
-                      try {
-                        success =
-                            await RingtoneSet.setAlarmFromNetwork(widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content: Text("Alarm sound  set successfully!"),
+                      final isSucces = await setBothScreenWallpaper();
+                      if (isSucces) {
+                        Fluttertoast.showToast(
+                          msg: "Wallpaper succesfully Updated!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: const Color(0xFF7209b7),
+                          textColor: Colors.white,
+                          fontSize: 16.0,
                         );
                         Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     },
                     child: Row(
                       children: [
                         const Icon(
-                          Icons.alarm,
+                          Icons.phonelink_lock_rounded,
                           color: Colors.black,
                           size: 25,
                         ),
@@ -551,7 +459,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                           width: 20,
                         ),
                         Text(
-                          "SET ALARM SOUND",
+                          "SET BOTH",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.black,
@@ -561,30 +469,6 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.person,
-                        color: Colors.black,
-                        size: 25,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "SET TO CONTACT",
-                        style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal,
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(
                     height: 30,
@@ -606,8 +490,14 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                       var snackBar;
                       if (sucess) {
                         print("sucess");
-                        snackBar = const SnackBar(
-                          content: Text("Your File  successfully Downloaded"),
+                        Fluttertoast.showToast(
+                          msg: "Wallpaper succesfully Downloaded",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: const Color(0xFF7209b7),
+                          textColor: Colors.white,
+                          fontSize: 16.0,
                         );
                         Navigator.of(context).pop();
                       }
