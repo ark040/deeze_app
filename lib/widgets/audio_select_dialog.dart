@@ -80,7 +80,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 23,
                 ),
                 GestureDetector(
                   onTap: () async {
@@ -142,7 +142,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 23,
                 ),
                 GestureDetector(
                   onTap: () async {
@@ -204,7 +204,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 23,
                 ),
                 GestureDetector(
                   onTap: () async {
@@ -266,7 +266,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 23,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(

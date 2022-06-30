@@ -179,7 +179,7 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
                 children: [
                   const Icon(
                     Icons.more_horiz,
-                    color: Colors.white,
+                    color: Colors.grey,
                     size: 30,
                   ),
                   const SizedBox(
@@ -199,13 +199,7 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
                       alignment: Alignment.center,
                       decoration: const BoxDecoration(
                           shape: BoxShape.circle, color: Colors.white),
-                      child: Transform.rotate(
-                        angle: 180 * math.pi / 180,
-                        child: const Icon(
-                          Icons.add_to_home_screen_rounded,
-                          size: 19,
-                        ),
-                      ),
+                      child: Image.asset("assets/save_wall.png"),
                     ),
                   ),
                   const SizedBox(
@@ -213,7 +207,7 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
                   ),
                   const Icon(
                     Icons.share_outlined,
-                    color: Colors.white,
+                    color: Colors.grey,
                     size: 25,
                   ),
                 ],
@@ -231,27 +225,33 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
     required String userName,
     String? userProfileUrl,
   }) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: CachedNetworkImage(
-            fit: BoxFit.cover,
-            imageUrl: urlImage,
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+    return SizedBox(
+      height: 500,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: CachedNetworkImage(
+              fit: BoxFit.cover,
+              imageUrl: urlImage,
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
-        ),
-        activeIndex == index
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 18, right: 10),
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Image.asset("assets/image_heart.png")),
-              )
-            : SizedBox.shrink()
-      ],
+          activeIndex == index
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 20, right: 10),
+                  child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Image.asset(
+                        "assets/image_heart.png",
+                        height: 35,
+                      )),
+                )
+              : SizedBox.shrink()
+        ],
+      ),
     );
   }
 }
@@ -426,7 +426,7 @@ class _WallpaperSelectDialogState extends State<WallpaperSelectDialog> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 22,
               ),
               GestureDetector(
                 onTap: () async {
@@ -483,7 +483,7 @@ class _WallpaperSelectDialogState extends State<WallpaperSelectDialog> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 22,
               ),
               GestureDetector(
                 onTap: () async {

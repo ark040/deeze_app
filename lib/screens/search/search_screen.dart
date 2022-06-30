@@ -137,90 +137,106 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: const Color(0xFF4d047d),
-            elevation: 0,
-            centerTitle: true,
-            title: SizedBox(
-              height: 35,
-              width: MediaQuery.of(context).size.width,
-              child: TypeAheadFormField<HydraMember?>(
-                  suggestionsBoxDecoration:
-                      const SuggestionsBoxDecoration(color: Colors.white),
-                  suggestionsCallback: _searchServices.search,
-                  debounceDuration: const Duration(milliseconds: 500),
-                  // hideSuggestionsOnKeyboardHide: false,
-                  textFieldConfiguration: TextFieldConfiguration(
-                    controller: _typeAheadController,
-                    decoration: const InputDecoration(
-                      hintText: "Search",
-                      hintStyle: TextStyle(
-                        color: Color(0xFF5d318c),
-                        fontSize: 12,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size(0, 60),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: const Color(0xFF4d047d),
+              elevation: 0,
+              centerTitle: true,
+              title: SizedBox(
+                height: 35,
+                width: MediaQuery.of(context).size.width,
+                child: TypeAheadFormField<HydraMember?>(
+                    suggestionsBoxDecoration:
+                        const SuggestionsBoxDecoration(color: Colors.white),
+                    suggestionsCallback: _searchServices.search,
+                    debounceDuration: const Duration(milliseconds: 500),
+                    // hideSuggestionsOnKeyboardHide: false,
+                    textFieldConfiguration: TextFieldConfiguration(
+                      controller: _typeAheadController,
+                      decoration: const InputDecoration(
+                        hintText: "Search",
+                        hintStyle: TextStyle(
+                          color: Color(0xFF5d318c),
+                          fontSize: 12,
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 20,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide:
+                              BorderSide(color: Color(0xFF5d318c), width: 0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderSide:
+                              BorderSide(color: Color(0xFF5d318c), width: 0.0),
+                        ),
+                        // suffixIcon: GestureDetector(
+                        //   onTap: (() {
+                        //     setState(() {
+                        //       ishow = false;
+                        //     });
+                        //   }),
+                        //   child: const Icon(
+                        //     Icons.clear,
+                        //     color: Color(0xFF5d318c),
+                        //   ),
+                        // ),
+                        prefixIcon:
+                            Icon(Icons.search, color: Color(0xFF5d318c)),
                       ),
-                      fillColor: Colors.white,
-                      filled: true,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 5,
-                        horizontal: 20,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5d318c), width: 0),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        borderSide:
-                            BorderSide(color: Color(0xFF5d318c), width: 0.0),
-                      ),
-                      // suffixIcon: GestureDetector(
-                      //   onTap: (() {
-                      //     setState(() {
-                      //       ishow = false;
-                      //     });
-                      //   }),
-                      //   child: const Icon(
-                      //     Icons.clear,
-                      //     color: Color(0xFF5d318c),
-                      //   ),
-                      // ),
-                      prefixIcon: Icon(Icons.search, color: Color(0xFF5d318c)),
                     ),
-                  ),
-                  itemBuilder: (context, HydraMember? suggestion) {
-                    final ringtone = suggestion!;
-                    return GestureDetector(
-                      onTap: (() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchScreen(
-                              searchText: _typeAheadController.text,
+                    itemBuilder: (context, HydraMember? suggestion) {
+                      final ringtone = suggestion!;
+                      return GestureDetector(
+                        onTap: (() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchScreen(
+                                searchText: _typeAheadController.text,
+                              ),
                             ),
-                          ),
-                        );
-                      }),
-                      child: Padding(
-                          padding: const EdgeInsets.only(left: 30, top: 10),
+                          );
+                        }),
+                        child: Padding(
+                            padding: const EdgeInsets.only(left: 30, top: 10),
+                            child: Text(
+                              "${ringtone.name}",
+                              style: GoogleFonts.archivo(
+                                fontStyle: FontStyle.normal,
+                                color: Color(0xFF5d318c),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )),
+                      );
+                    },
+                    onSuggestionSelected: (HydraMember? suggestion) {},
+                    noItemsFoundBuilder: (context) => Center(
                           child: Text(
-                            "${ringtone.name}",
+                            "No Found",
                             style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal,
                               color: Color(0xFF5d318c),
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
-                          )),
-                    );
-                  },
-                  onSuggestionSelected: (HydraMember? suggestion) {},
-                  noItemsFoundBuilder: (context) => Center(
+                          ),
+                        ),
+                    errorBuilder: (BuildContext context, error) {
+                      return Center(
                         child: Text(
-                          "No Found",
+                          "Please enter ",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Color(0xFF5d318c),
@@ -228,301 +244,289 @@ class _SearchScreenState extends State<SearchScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
-                  errorBuilder: (BuildContext context, error) {
-                    return Center(
-                      child: Text(
-                        "Please enter ",
-                        style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal,
-                          color: Color(0xFF5d318c),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                      );
+                    }),
+              )),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                Color(0xFF4d047d),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+              ]),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: (() {
+                      setState(() {
+                        isRingtone = true;
+                        isNotification = false;
+                        isWallpaper = false;
+                      });
+                    }),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          decoration: BoxDecoration(
+                            color: isRingtone
+                                ? Color(0xFF5d318c)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "Ringtone",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-            )),
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xFF4d047d),
-                  Color(0xFF17131F),
-                  Color(0xFF17131F),
-                  Color(0xFF17131F),
-                  Color(0xFF17131F),
-                  Color(0xFF17131F),
-                  Color(0xFF17131F),
-                ]),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 50,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: (() {
-                        setState(() {
-                          isRingtone = true;
-                          isNotification = false;
-                          isWallpaper = false;
-                        });
-                      }),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: isRingtone
-                                  ? Color(0xFF5d318c)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "Ringtone",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFF6666),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "${ringtonelist.length}",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: (() {
-                        setState(() {
-                          isRingtone = false;
-                          isNotification = true;
-                          isWallpaper = false;
-                        });
-                      }),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: isNotification
-                                  ? Color(0xFF5d318c)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "Notifications",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFF6666),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "0",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: (() {
-                        setState(() {
-                          isRingtone = false;
-                          isNotification = false;
-                          isWallpaper = true;
-                        });
-                      }),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            decoration: BoxDecoration(
-                              color: isWallpaper
-                                  ? Color(0xFF5d318c)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "Wallpapers",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Container(
-                            height: 30,
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFF6666),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Text(
-                              "${wallpaperList.length}",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              isWallpaper
-                  ? Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: SmartRefresher(
-                          enablePullUp: true,
-                          controller: _wallpaperRefreshController,
-                          onRefresh: () async {
-                            final result =
-                                await fetchWallpaper(isRefresh: true);
-                            if (result) {
-                              _wallpaperRefreshController.refreshCompleted();
-                            } else {
-                              _wallpaperRefreshController.refreshFailed();
-                            }
-                          },
-                          onLoading: () async {
-                            final result = await fetchWallpaper();
-                            if (result) {
-                              _wallpaperRefreshController.loadComplete();
-                            } else {
-                              _wallpaperRefreshController.loadFailed();
-                            }
-                          },
-                          child: GridView.builder(
-                              itemCount: wallpaperList.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                      maxCrossAxisExtent: 160,
-                                      childAspectRatio: 3 / 6,
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10),
-                              itemBuilder: (context, index) {
-                                return CategoryCard(
-                                  index: index,
-                                  listHydra: wallpaperList,
-                                  image: wallpaperList[index].file!,
-                                  name: wallpaperList[index].name!,
-                                );
-                              }),
+                        const SizedBox(
+                          height: 15,
                         ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              isRingtone
-                  ? Expanded(
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFF6666),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "${ringtonelist.length}",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      setState(() {
+                        isRingtone = false;
+                        isNotification = true;
+                        isWallpaper = false;
+                      });
+                    }),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          decoration: BoxDecoration(
+                            color: isNotification
+                                ? Color(0xFF5d318c)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "Notifications",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFF6666),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "0",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      setState(() {
+                        isRingtone = false;
+                        isNotification = false;
+                        isWallpaper = true;
+                      });
+                    }),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          decoration: BoxDecoration(
+                            color: isWallpaper
+                                ? Color(0xFF5d318c)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "Wallpapers",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Container(
+                          height: 30,
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFF6666),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Text(
+                            "${wallpaperList.length}",
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            isWallpaper
+                ? Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
                       child: SmartRefresher(
                         enablePullUp: true,
-                        controller: _ringtoneRefreshController,
+                        controller: _wallpaperRefreshController,
                         onRefresh: () async {
-                          final result = await fetchRingtone(isRefresh: true);
+                          final result = await fetchWallpaper(isRefresh: true);
                           if (result) {
-                            _ringtoneRefreshController.refreshCompleted();
+                            _wallpaperRefreshController.refreshCompleted();
                           } else {
-                            _ringtoneRefreshController.refreshFailed();
+                            _wallpaperRefreshController.refreshFailed();
                           }
                         },
                         onLoading: () async {
-                          final result = await fetchRingtone();
+                          final result = await fetchWallpaper();
                           if (result) {
-                            _ringtoneRefreshController.loadComplete();
+                            _wallpaperRefreshController.loadComplete();
                           } else {
-                            _ringtoneRefreshController.loadFailed();
+                            _wallpaperRefreshController.loadFailed();
                           }
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: ListView.builder(
-                            itemCount: ringtonelist.length,
-                            scrollDirection: Axis.vertical,
+                        child: GridView.builder(
+                            itemCount: wallpaperList.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 160,
+                                    childAspectRatio: 3 / 6,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 10),
                             itemBuilder: (context, index) {
-                              return RingtonesCard(
+                              return CategoryCard(
                                 index: index,
-                                listHydra: ringtonelist,
-                                ringtoneName: ringtonelist[index].name!,
-                                file: ringtonelist[index].file!,
+                                listHydra: wallpaperList,
+                                image: wallpaperList[index].file!,
+                                name: wallpaperList[index].name!,
                               );
-                            },
-                          ),
+                            }),
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink(),
+            isRingtone
+                ? Expanded(
+                    child: SmartRefresher(
+                      enablePullUp: true,
+                      controller: _ringtoneRefreshController,
+                      onRefresh: () async {
+                        final result = await fetchRingtone(isRefresh: true);
+                        if (result) {
+                          _ringtoneRefreshController.refreshCompleted();
+                        } else {
+                          _ringtoneRefreshController.refreshFailed();
+                        }
+                      },
+                      onLoading: () async {
+                        final result = await fetchRingtone();
+                        if (result) {
+                          _ringtoneRefreshController.loadComplete();
+                        } else {
+                          _ringtoneRefreshController.loadFailed();
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ListView.builder(
+                          itemCount: ringtonelist.length,
+                          scrollDirection: Axis.vertical,
+                          itemBuilder: (context, index) {
+                            return RingtonesCard(
+                              index: index,
+                              listHydra: ringtonelist,
+                              ringtoneName: ringtonelist[index].name!,
+                              file: ringtonelist[index].file!,
+                            );
+                          },
                         ),
                       ),
-                    )
-                  : SizedBox.shrink(),
-            ],
-          ),
+                    ),
+                  )
+                : SizedBox.shrink(),
+          ],
         ),
       ),
     );

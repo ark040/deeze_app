@@ -110,7 +110,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
               options: CarouselOptions(
                   height: 272,
                   pageSnapping: true,
-                  viewportFraction: 0.7,
+                  viewportFraction: 0.73,
                   enlargeCenterPage: true,
                   enableInfiniteScroll: false,
                   onPageChanged: (index, reason) {
@@ -199,7 +199,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                   },
                   child: const Icon(
                     Icons.more_horiz,
-                    color: Colors.white,
+                    color: Colors.grey,
                     size: 30,
                   ),
                 ),
@@ -231,7 +231,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                 ),
                 const Icon(
                   Icons.share_outlined,
-                  color: Colors.white,
+                  color: Colors.grey,
                   size: 30,
                 ),
               ],
@@ -268,6 +268,7 @@ class _BuildPlayState extends State<BuildPlay> {
   final audioPlayer = AudioPlayer();
 
   bool isPlaying = false;
+
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
 
@@ -276,16 +277,17 @@ class _BuildPlayState extends State<BuildPlay> {
     // TODO: implement initState
     super.initState();
 
-    liseten(); // audioPlayer.onDurationChanged.listen((state) {
-    //   setState(() {
-    //     duration = state;
-    //   });
-    // });
-    // audioPlayer.onAudioPositionChanged.listen((state) {
-    //   setState(() {
-    //     position = state;
-    //   });
-    // });
+    liseten();
+    audioPlayer.onDurationChanged.listen((state) {
+      setState(() {
+        duration = state;
+      });
+    });
+    audioPlayer.onAudioPositionChanged.listen((state) {
+      setState(() {
+        position = state;
+      });
+    });
   }
 
   void liseten() async {
@@ -307,78 +309,102 @@ class _BuildPlayState extends State<BuildPlay> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 254,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: <Color>[
-              Color(0xFF9f5c96),
-              Color(0xFF93b1b9),
-            ]),
-        borderRadius: BorderRadius.circular(6),
+    return SliderTheme(
+      data: SliderThemeData(
+        trackHeight: 272,
+        thumbShape: SliderComponentShape.noOverlay,
+        overlayShape: SliderComponentShape.noOverlay,
+        valueIndicatorShape: SliderComponentShape.noOverlay,
+        trackShape: RectangularSliderTrackShape(),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: (() async {
-                  if (isPlaying) {
-                    await audioPlayer.pause();
-                  } else {
-                    await audioPlayer.play(widget.file);
-                  }
+      child: Container(
+        width: 254,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[
+                Color(0xFF9f5c96),
+                Color(0xFF93b1b9),
+              ]),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Stack(
+          children: [
+            Slider(
+                activeColor: const Color(0xFF4d047d),
+                inactiveColor: Colors.transparent,
+                min: 0,
+                max: duration.inSeconds.toDouble(),
+                value: position.inSeconds.toDouble(),
+                onChanged: (value) async {
+                  final myposition = Duration(seconds: value.toInt());
+                  await audioPlayer.seek(myposition);
+                  await audioPlayer.resume();
                 }),
-                child: Container(
-                  height: 88,
-                  width: 88,
-                  margin: EdgeInsets.only(left: 65),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFa28eac),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow_sharp,
-                    color: Colors.white,
-                    size: 35,
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: (() async {
+                        if (isPlaying) {
+                          await audioPlayer.pause();
+                        } else {
+                          await audioPlayer.play(widget.file);
+                        }
+                      }),
+                      child: Container(
+                        height: 88,
+                        width: 88,
+                        margin: EdgeInsets.only(left: 65),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFa28eac),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Icon(
+                          isPlaying ? Icons.pause : Icons.play_arrow_sharp,
+                          color: Colors.white,
+                          size: 35,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Container(
-            height: double.infinity,
-            width: 61,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Color(0xFF9a83a6),
-                    Color(0xFF93b4bb),
-                  ]),
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(6),
-                bottomRight: Radius.circular(6),
-              ),
+                Container(
+                  height: double.infinity,
+                  width: 61,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: <Color>[
+                          Color(0xFF9a83a6),
+                          Color(0xFF93b4bb),
+                        ]),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(6),
+                      bottomRight: Radius.circular(6),
+                    ),
+                  ),
+                  child: widget.activeIndex == widget.index
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 15, right: 15),
+                          child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Image.asset("assets/image_heart.png")),
+                        )
+                      : SizedBox.shrink(),
+                )
+              ],
             ),
-            child: widget.activeIndex == widget.index
-                ? Padding(
-                    padding: const EdgeInsets.only(bottom: 15, right: 15),
-                    child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Image.asset("assets/image_heart.png")),
-                  )
-                : SizedBox.shrink(),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
