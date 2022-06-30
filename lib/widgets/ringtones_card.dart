@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:deeze_app/widgets/audio_player.dart';
 import 'package:flutter/material.dart';
@@ -63,47 +65,36 @@ class _RingtonesCardState extends State<RingtonesCard> {
   }
 
   List mygradientList = const [
-    LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          Color(0xFF279A88),
-          Color(0xFF737B64),
-          Color(0xFF4F4C7E),
-          Color(0xFF4F4C7E),
-        ]),
-    LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          Color(0xFF5951B0),
-          Color(0xFF5F5C8C),
-          Color(0xFF4F4C7E),
-          Color(0xFF4F4C7E),
-        ]),
-    LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          Color(0xFF5D8998),
-          Color(0xFF4F4C7E),
-          Color(0xFF4F4C7E),
-          Color(0xFF4F4C7E),
-        ]),
-    LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          Color(0xFF89C1D3),
-          Color(0xFF5046DE),
-          Color(0xFF4F4C7E),
-          Color(0xFF4F4C7E),
-        ]),
+    LinearGradient(colors: [
+      Color(0xFF279A88),
+      Color(0xFF737B64),
+      Color(0xFF4F4C7E),
+      Color(0xFF4F4C7E),
+    ]),
+    LinearGradient(colors: [
+      Color(0xFF5951B0),
+      Color(0xFF5F5C8C),
+      Color(0xFF4F4C7E),
+      Color(0xFF4F4C7E),
+    ]),
+    LinearGradient(colors: [
+      Color(0xFF5D8998),
+      Color(0xFF4F4C7E),
+      Color(0xFF4F4C7E),
+      Color(0xFF4F4C7E),
+    ]),
+    LinearGradient(colors: [
+      Color(0xFF89C1D3),
+      Color(0xFF5046DE),
+      Color(0xFF4F4C7E),
+      Color(0xFF4F4C7E),
+    ]),
   ];
+  final _random = new Random();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
+    var element = mygradientList[_random.nextInt(mygradientList.length)];
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -130,7 +121,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
               height: 70,
               width: screenWidth,
               decoration: BoxDecoration(
-                gradient: mygradientList[0],
+                gradient: element,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Stack(
