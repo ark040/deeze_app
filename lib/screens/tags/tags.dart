@@ -91,31 +91,36 @@ class _TagsState extends State<Tags> {
           _refreshController.loadFailed();
         }
       },
-      child: ListView.builder(
-        itemCount: hydraMember.length,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: Container(
-              width: screenWidth * 0.3,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: Text(
-                hydraMember[index].name!,
-                style: GoogleFonts.archivo(
-                  fontStyle: FontStyle.normal,
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 17),
+        child: ListView.builder(
+          itemCount: hydraMember.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade600, width: 2),
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Text(
+                    hydraMember[index].name!,
+                    style: GoogleFonts.archivo(
+                      fontStyle: FontStyle.normal,
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -14,7 +14,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:ringtone_set/ringtone_set.dart';
 
 import '../models/deeze_model.dart';
+import 'audio_select_dialog.dart';
 import 'elevated_button_widget.dart';
+import 'more_audio_dialog.dart';
 
 class CustomAudioPlayer extends StatefulWidget {
   final List<HydraMember> listHydra;
@@ -39,6 +41,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => animateToSilde(widget.index));
   }
@@ -49,11 +52,10 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
     super.dispose();
   }
 
+  late int activeIndex = widget.index;
   String myfile = "";
   @override
   Widget build(BuildContext context) {
-    print(widget.index);
-    animateToSilde(5);
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -74,16 +76,30 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              widget.listHydra[activeIndex].name!,
+              style: GoogleFonts.archivo(
+                fontStyle: FontStyle.normal,
+                color: Colors.white,
+                fontSize: 20,
+                wordSpacing: -0.1,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             CarouselSlider.builder(
               carouselController: _controller,
               itemCount: widget.listHydra.length,
               itemBuilder: (context, index, realIndex) {
                 final file = widget.listHydra[index].file;
                 final name = widget.listHydra[index].name;
-                myfile = index == 0
-                    ? widget.listHydra[0].file!
-                    : widget.listHydra[index - 1].file!;
+                // myfile = index == 0
+                //     ? widget.listHydra[0].file!
+                //     : widget.listHydra[index - 1].file!;
                 return BuildPlay(
+                  activeIndex: activeIndex,
                   file: file!,
                   index: index,
                   name: name!,
@@ -92,12 +108,76 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                 );
               },
               options: CarouselOptions(
-                height: 500,
-                pageSnapping: true,
-                initialPage: 0,
-                enlargeCenterPage: true,
-                enableInfiniteScroll: false,
+                  height: 272,
+                  pageSnapping: true,
+                  viewportFraction: 0.7,
+                  enlargeCenterPage: true,
+                  enableInfiniteScroll: false,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      myfile = widget.listHydra[index].file!;
+                      activeIndex = index;
+                    });
+                  }),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 70),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      widget.listHydra[activeIndex].user?.image != null
+                          ? CircleAvatar(
+                              radius: 15,
+                              backgroundImage: NetworkImage(
+                                widget.listHydra[activeIndex].user!.image!,
+                              ),
+                            )
+                          : const CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 15,
+                            ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Text(
+                        widget.listHydra[activeIndex].user!.firstName!,
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.white,
+                          fontSize: 15,
+                          wordSpacing: -0.05,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 0),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.white,
+                          size: 13,
+                        ),
+                        Text(
+                          "23k",
+                          style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
+            ),
+            const SizedBox(
+              height: 45,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +187,14 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                     showCupertinoModalPopup(
                         context: context,
                         builder: (context) {
-                          return AudioSelectDialog(file: myfile);
+                          return MoreAudioDialog(
+                            file: myfile,
+                            fileName: widget.listHydra[activeIndex].name!,
+                            userName:
+                                widget.listHydra[activeIndex].user!.firstName!,
+                            userImage:
+                                widget.listHydra[activeIndex].user!.image!,
+                          );
                         });
                   },
                   child: const Icon(
@@ -119,15 +206,24 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                 const SizedBox(
                   width: 50,
                 ),
-                Container(
-                  height: 37,
-                  width: 37,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                  child: const Icon(
-                    Icons.add_call,
-                    size: 18,
+                GestureDetector(
+                  onTap: () {
+                    showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return AudioSelectDialog(file: myfile);
+                        });
+                  },
+                  child: Container(
+                    height: 43,
+                    width: 43,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.white),
+                    child: const Icon(
+                      Icons.phone_callback,
+                      size: 25,
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -153,13 +249,15 @@ class BuildPlay extends StatefulWidget {
   final String userName;
   final String? userProfileUrl;
   final int index;
+  final int activeIndex;
   const BuildPlay(
       {Key? key,
       required this.file,
       required this.name,
       required this.index,
       required this.userName,
-      this.userProfileUrl})
+      this.userProfileUrl,
+      required this.activeIndex})
       : super(key: key);
 
   @override
@@ -209,34 +307,22 @@ class _BuildPlayState extends State<BuildPlay> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          widget.name,
-          style: GoogleFonts.archivo(
-            fontStyle: FontStyle.normal,
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(
-          height: 30,
-        ),
-        Container(
-          height: 320,
-          width: 280,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[
-                  Color(0xFF9f5c96),
-                  Color(0xFF93b1b9),
-                ]),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
+    return Container(
+      width: 254,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[
+              Color(0xFF9f5c96),
+              Color(0xFF93b1b9),
+            ]),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -249,399 +335,50 @@ class _BuildPlayState extends State<BuildPlay> {
                   }
                 }),
                 child: Container(
-                  height: 50,
-                  width: 50,
+                  height: 88,
+                  width: 88,
+                  margin: EdgeInsets.only(left: 65),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: const Color(0xFFa28eac),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white),
+                    border: Border.all(color: Colors.grey),
                   ),
                   child: Icon(
                     isPlaying ? Icons.pause : Icons.play_arrow_sharp,
                     color: Colors.white,
+                    size: 35,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-        // Slider(
-        //   min: 0,
-        //   max: duration.inSeconds.toDouble(),
-        //   value: position.inSeconds.toDouble(),
-        //   onChanged: onChanged,
-        // ),
-        // Row(children: [
-        //   Text(formatTime())
-        // ],)
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  widget.userProfileUrl != null
-                      ? CircleAvatar(
-                          radius: 15,
-                          backgroundImage: NetworkImage(widget.userProfileUrl!),
-                        )
-                      : const CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          radius: 15,
-                        ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    widget.userName,
-                    style: GoogleFonts.archivo(
-                      fontStyle: FontStyle.normal,
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 5),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.arrow_downward,
-                      color: Colors.white,
-                      size: 13,
-                    ),
-                    Text(
-                      "23k",
-                      style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class AudioSelectDialog extends StatefulWidget {
-  final String file;
-  const AudioSelectDialog({Key? key, required this.file}) : super(key: key);
-
-  @override
-  State<AudioSelectDialog> createState() => _AudioSelectDialogState();
-}
-
-class _AudioSelectDialogState extends State<AudioSelectDialog> {
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {}
-  Future<bool> downloadFile(String url) async {
-    final appStorage = await getApplicationDocumentsDirectory();
-    final file = File("${appStorage.path}/video.mp3");
-    try {
-      final response = await Dio().get(url,
-          options: Options(
-              responseType: ResponseType.bytes,
-              followRedirects: false,
-              receiveTimeout: 0));
-      final raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      raf.close();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Card(
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            height: 340,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 30,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      bool success = false;
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      try {
-                        success = await RingtoneSet.setRingtoneFromNetwork(
-                            widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content: Text("Ringtone set successfully!"),
-                        );
-                        Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.call_end_sharp,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET RINGTONE",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      bool success = false;
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      try {
-                        success = await RingtoneSet.setNotificationFromNetwork(
-                            widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content:
-                              Text("Notifications sound  set successfully!"),
-                        );
-                        Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET NOTIFICATION",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      bool success = false;
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      try {
-                        success =
-                            await RingtoneSet.setAlarmFromNetwork(widget.file);
-                      } on PlatformException {
-                        success = false;
-                      }
-                      var snackBar;
-                      if (success) {
-                        snackBar = const SnackBar(
-                          content: Text("Alarm sound  set successfully!"),
-                        );
-                        Navigator.of(context).pop();
-                      } else {
-                        snackBar = const SnackBar(content: Text("Error"));
-                        Navigator.of(context).pop();
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.alarm,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET ALARM SOUND",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.person,
-                        color: Colors.black,
-                        size: 25,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "SET TO CONTACT",
-                        style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal,
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      final sucess = await downloadFile(widget.file);
-                      var snackBar;
-                      if (sucess) {
-                        print("sucess");
-                        snackBar = const SnackBar(
-                          content: Text("Your File  successfully Downloaded"),
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Container(
-                        height: 37,
-                        // margin: EdgeInsets.only(left: 20),
-                        width: MediaQuery.of(context).size.width * 0.58,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: <Color>[
-                                Color(0xFF7209b7),
-                                Color(0xFF5c3fcc),
-                              ]),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "SAVE TO MEDIA",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )),
-                  ),
-                ],
+          Container(
+            height: double.infinity,
+            width: 61,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[
+                    Color(0xFF9a83a6),
+                    Color(0xFF93b4bb),
+                  ]),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(6),
+                bottomRight: Radius.circular(6),
               ),
             ),
-          ),
-        ),
+            child: widget.activeIndex == widget.index
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 15, right: 15),
+                    child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Image.asset("assets/image_heart.png")),
+                  )
+                : SizedBox.shrink(),
+          )
+        ],
       ),
     );
   }

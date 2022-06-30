@@ -221,12 +221,13 @@ class _WallPapersState extends State<WallPapers> {
                             }),
                       )
                     : Text(
-                        widget.type,
+                        "Wallpapers",
                         style: GoogleFonts.archivo(
                           fontStyle: FontStyle.normal,
                           color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          wordSpacing: 0.34,
                         ),
                       ),
                 actions: [
@@ -261,15 +262,15 @@ class _WallPapersState extends State<WallPapers> {
                           Color(0xFF17131F),
                         ]),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 17),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -277,8 +278,9 @@ class _WallPapersState extends State<WallPapers> {
                               style: GoogleFonts.archivo(
                                 fontStyle: FontStyle.normal,
                                 color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                wordSpacing: 0.19,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             GestureDetector(
@@ -297,7 +299,9 @@ class _WallPapersState extends State<WallPapers> {
                                     style: GoogleFonts.archivo(
                                       fontStyle: FontStyle.normal,
                                       color: Colors.white,
-                                      fontSize: 14,
+                                      fontSize: 10,
+                                      wordSpacing: 0.16,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   const SizedBox(
@@ -313,28 +317,31 @@ class _WallPapersState extends State<WallPapers> {
                             )
                           ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 75,
-                          width: screenWidth,
-                          child: BlocConsumer<CategoryBloc, CategoryState>(
-                            listener: (context, state) {
-                              // TODO: implement listener
-                            },
-                            builder: (context, state) {
-                              if (state is CategoryInitial) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              if (state is LoadedCategory) {
-                                return ListView.builder(
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        height: 60,
+                        width: screenWidth,
+                        child: BlocConsumer<CategoryBloc, CategoryState>(
+                          listener: (context, state) {
+                            // TODO: implement listener
+                          },
+                          builder: (context, state) {
+                            if (state is CategoryInitial) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state is LoadedCategory) {
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 17),
+                                child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   itemCount: 4,
                                   itemBuilder: (context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(right: 15),
+                                      padding: const EdgeInsets.only(right: 12),
                                       child: WallpaperCategoryCard(
                                         id: state.categories!
                                             .hydraMember![index].id!,
@@ -345,17 +352,20 @@ class _WallPapersState extends State<WallPapers> {
                                       ),
                                     );
                                   },
-                                );
-                              }
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            },
-                          ),
+                                ),
+                              );
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17),
+                        child: Text(
                           "Popular",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
@@ -363,57 +373,57 @@ class _WallPapersState extends State<WallPapers> {
                             fontSize: 15,
                           ),
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(height: 33, width: screenWidth, child: Tags()),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: SmartRefresher(
-                              enablePullUp: true,
-                              controller: _refreshController,
-                              onRefresh: () async {
-                                final result =
-                                    await fetchWallpapers(isRefresh: true);
-                                if (result) {
-                                  _refreshController.refreshCompleted();
-                                } else {
-                                  _refreshController.refreshFailed();
-                                }
-                              },
-                              onLoading: () async {
-                                final result = await fetchWallpapers();
-                                if (result) {
-                                  _refreshController.loadComplete();
-                                } else {
-                                  _refreshController.loadFailed();
-                                }
-                              },
-                              child: GridView.builder(
-                                  itemCount: hydraMember.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 160,
-                                          childAspectRatio: 3 / 6,
-                                          crossAxisSpacing: 10,
-                                          mainAxisSpacing: 10),
-                                  itemBuilder: (context, index) {
-                                    return CategoryCard(
-                                      index: index,
-                                      listHydra: hydraMember,
-                                      image: hydraMember[index].file!,
-                                      name: hydraMember[index].name!,
-                                    );
-                                  }),
-                            ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      SizedBox(height: 33, width: screenWidth, child: Tags()),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: SmartRefresher(
+                            enablePullUp: true,
+                            controller: _refreshController,
+                            onRefresh: () async {
+                              final result =
+                                  await fetchWallpapers(isRefresh: true);
+                              if (result) {
+                                _refreshController.refreshCompleted();
+                              } else {
+                                _refreshController.refreshFailed();
+                              }
+                            },
+                            onLoading: () async {
+                              final result = await fetchWallpapers();
+                              if (result) {
+                                _refreshController.loadComplete();
+                              } else {
+                                _refreshController.loadFailed();
+                              }
+                            },
+                            child: GridView.builder(
+                                itemCount: hydraMember.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        childAspectRatio: 3 / 6,
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 5),
+                                itemBuilder: (context, index) {
+                                  return CategoryCard(
+                                    index: index,
+                                    listHydra: hydraMember,
+                                    image: hydraMember[index].file!,
+                                    name: hydraMember[index].name!,
+                                  );
+                                }),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )),
             )
           : Scaffold(
@@ -421,6 +431,15 @@ class _WallPapersState extends State<WallPapers> {
                 backgroundColor: const Color(0xFF4d047d),
                 elevation: 0,
                 centerTitle: true,
+                leading: Builder(
+                  builder: (ctx) {
+                    return GestureDetector(
+                        onTap: (() {
+                          Scaffold.of(ctx).openDrawer();
+                        }),
+                        child: Image.asset("assets/menu.png"));
+                  },
+                ),
                 title: ishow
                     ? SizedBox(
                         height: 30,
@@ -561,12 +580,13 @@ class _WallPapersState extends State<WallPapers> {
                             }),
                       )
                     : Text(
-                        widget.type,
+                        "Wallpapers",
                         style: GoogleFonts.archivo(
                           fontStyle: FontStyle.normal,
                           color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          wordSpacing: 0.34,
                         ),
                       ),
                 actions: [
@@ -601,15 +621,15 @@ class _WallPapersState extends State<WallPapers> {
                           Color(0xFF17131F),
                         ]),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 17),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17),
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -617,8 +637,9 @@ class _WallPapersState extends State<WallPapers> {
                               style: GoogleFonts.archivo(
                                 fontStyle: FontStyle.normal,
                                 color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                wordSpacing: 0.19,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             GestureDetector(
@@ -637,7 +658,9 @@ class _WallPapersState extends State<WallPapers> {
                                     style: GoogleFonts.archivo(
                                       fontStyle: FontStyle.normal,
                                       color: Colors.white,
-                                      fontSize: 14,
+                                      fontSize: 10,
+                                      wordSpacing: 0.16,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   const SizedBox(
@@ -653,28 +676,31 @@ class _WallPapersState extends State<WallPapers> {
                             )
                           ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        SizedBox(
-                          height: 75,
-                          width: screenWidth,
-                          child: BlocConsumer<CategoryBloc, CategoryState>(
-                            listener: (context, state) {
-                              // TODO: implement listener
-                            },
-                            builder: (context, state) {
-                              if (state is CategoryInitial) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              }
-                              if (state is LoadedCategory) {
-                                return ListView.builder(
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      SizedBox(
+                        height: 60,
+                        width: screenWidth,
+                        child: BlocConsumer<CategoryBloc, CategoryState>(
+                          listener: (context, state) {
+                            // TODO: implement listener
+                          },
+                          builder: (context, state) {
+                            if (state is CategoryInitial) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state is LoadedCategory) {
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 17),
+                                child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
                                   itemCount: 4,
                                   itemBuilder: (context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.only(right: 15),
+                                      padding: const EdgeInsets.only(right: 12),
                                       child: WallpaperCategoryCard(
                                         id: state.categories!
                                             .hydraMember![index].id!,
@@ -685,17 +711,20 @@ class _WallPapersState extends State<WallPapers> {
                                       ),
                                     );
                                   },
-                                );
-                              }
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            },
-                          ),
+                                ),
+                              );
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17),
+                        child: Text(
                           "Popular",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
@@ -703,57 +732,57 @@ class _WallPapersState extends State<WallPapers> {
                             fontSize: 15,
                           ),
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(height: 33, width: screenWidth, child: Tags()),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: SmartRefresher(
-                              enablePullUp: true,
-                              controller: _refreshController,
-                              onRefresh: () async {
-                                final result =
-                                    await fetchWallpapers(isRefresh: true);
-                                if (result) {
-                                  _refreshController.refreshCompleted();
-                                } else {
-                                  _refreshController.refreshFailed();
-                                }
-                              },
-                              onLoading: () async {
-                                final result = await fetchWallpapers();
-                                if (result) {
-                                  _refreshController.loadComplete();
-                                } else {
-                                  _refreshController.loadFailed();
-                                }
-                              },
-                              child: GridView.builder(
-                                  itemCount: hydraMember.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          maxCrossAxisExtent: 160,
-                                          childAspectRatio: 3 / 6,
-                                          crossAxisSpacing: 10,
-                                          mainAxisSpacing: 10),
-                                  itemBuilder: (context, index) {
-                                    return CategoryCard(
-                                      index: index,
-                                      listHydra: hydraMember,
-                                      image: hydraMember[index].file!,
-                                      name: hydraMember[index].name!,
-                                    );
-                                  }),
-                            ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      SizedBox(height: 33, width: screenWidth, child: Tags()),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: SmartRefresher(
+                            enablePullUp: true,
+                            controller: _refreshController,
+                            onRefresh: () async {
+                              final result =
+                                  await fetchWallpapers(isRefresh: true);
+                              if (result) {
+                                _refreshController.refreshCompleted();
+                              } else {
+                                _refreshController.refreshFailed();
+                              }
+                            },
+                            onLoading: () async {
+                              final result = await fetchWallpapers();
+                              if (result) {
+                                _refreshController.loadComplete();
+                              } else {
+                                _refreshController.loadFailed();
+                              }
+                            },
+                            child: GridView.builder(
+                                itemCount: hydraMember.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        childAspectRatio: 3 / 6,
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 5),
+                                itemBuilder: (context, index) {
+                                  return CategoryCard(
+                                    index: index,
+                                    listHydra: hydraMember,
+                                    image: hydraMember[index].file!,
+                                    name: hydraMember[index].name!,
+                                  );
+                                }),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   )),
               drawer: Drawer(
                 child: Container(
@@ -790,7 +819,7 @@ class _WallPapersState extends State<WallPapers> {
                                 const Icon(
                                   Icons.volume_up,
                                   color: Colors.white,
-                                  size: 30,
+                                  size: 25,
                                 ),
                                 const SizedBox(
                                   width: 26,
@@ -800,8 +829,9 @@ class _WallPapersState extends State<WallPapers> {
                                   style: GoogleFonts.archivo(
                                     fontStyle: FontStyle.normal,
                                     color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    wordSpacing: -0.09,
                                   ),
                                 ),
                               ],
@@ -809,7 +839,7 @@ class _WallPapersState extends State<WallPapers> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         GestureDetector(
                           onTap: () {
@@ -830,7 +860,7 @@ class _WallPapersState extends State<WallPapers> {
                                 const Icon(
                                   Icons.wallpaper,
                                   color: Colors.white,
-                                  size: 30,
+                                  size: 25,
                                 ),
                                 const SizedBox(
                                   width: 26,
@@ -840,8 +870,9 @@ class _WallPapersState extends State<WallPapers> {
                                   style: GoogleFonts.archivo(
                                     fontStyle: FontStyle.normal,
                                     color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    wordSpacing: -0.09,
                                   ),
                                 ),
                               ],
@@ -849,7 +880,7 @@ class _WallPapersState extends State<WallPapers> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 40),
@@ -858,7 +889,7 @@ class _WallPapersState extends State<WallPapers> {
                               const Icon(
                                 Icons.notifications,
                                 color: Colors.amber,
-                                size: 30,
+                                size: 25,
                               ),
                               const SizedBox(
                                 width: 20,
@@ -870,8 +901,9 @@ class _WallPapersState extends State<WallPapers> {
                                   style: GoogleFonts.archivo(
                                     fontStyle: FontStyle.normal,
                                     color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    wordSpacing: -0.09,
                                   ),
                                 ),
                               ),
@@ -879,16 +911,16 @@ class _WallPapersState extends State<WallPapers> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 40),
                           child: Row(
                             children: [
                               const Icon(
-                                Icons.heart_broken,
+                                Icons.favorite,
                                 color: Colors.white,
-                                size: 30,
+                                size: 25,
                               ),
                               const SizedBox(
                                 width: 26,
@@ -898,98 +930,99 @@ class _WallPapersState extends State<WallPapers> {
                                 style: GoogleFonts.archivo(
                                   fontStyle: FontStyle.normal,
                                   color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  wordSpacing: -0.09,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
-                        const Divider(
+                        Divider(
                           height: 1,
-                          thickness: 0.9,
-                          color: Colors.white,
+                          thickness: 1,
+                          color: Colors.grey.shade600,
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 40),
+                          padding: const EdgeInsets.only(left: 45),
                           child: Row(
                             children: [
                               const SizedBox(
-                                height: 25,
-                                width: 30,
+                                height: 14,
+                                width: 14,
                                 child: Icon(
                                   Icons.info,
                                   color: Colors.white,
                                 ),
                               ),
                               SizedBox(
-                                width: 26,
+                                width: 35,
                               ),
                               Text(
                                 "Help",
                                 style: GoogleFonts.archivo(
                                   fontStyle: FontStyle.normal,
                                   color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 40),
+                          padding: const EdgeInsets.only(left: 45),
                           child: Row(
                             children: [
                               const SizedBox(
-                                height: 25,
-                                width: 30,
+                                height: 14,
+                                width: 14,
                                 child: Icon(
                                   Icons.settings,
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 26,
+                              SizedBox(
+                                width: 35,
                               ),
                               Text(
                                 "Settings",
                                 style: GoogleFonts.archivo(
                                   fontStyle: FontStyle.normal,
                                   color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 40),
+                          padding: const EdgeInsets.only(left: 45),
                           child: Row(
                             children: [
                               const SizedBox(
-                                height: 25,
-                                width: 30,
+                                height: 14,
+                                width: 14,
                                 child: Icon(
                                   Icons.privacy_tip,
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(
-                                width: 20,
+                              SizedBox(
+                                width: 30,
                               ),
                               Padding(
                                 padding: EdgeInsets.all(8.0),
@@ -998,8 +1031,8 @@ class _WallPapersState extends State<WallPapers> {
                                   style: GoogleFonts.archivo(
                                     fontStyle: FontStyle.normal,
                                     color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
                                   ),
                                 ),
                               ),
@@ -1007,23 +1040,23 @@ class _WallPapersState extends State<WallPapers> {
                           ),
                         ),
                         const SizedBox(
-                          height: 25,
+                          height: 30,
                         ),
-                        const Divider(
+                        Divider(
                           height: 1,
-                          thickness: 0.9,
-                          color: Colors.white,
+                          thickness: 1,
+                          color: Colors.grey.shade600,
                         ),
                         const SizedBox(
                           height: 25,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 45),
+                          padding: const EdgeInsets.only(left: 50),
                           child: Row(
                             children: [
                               Container(
-                                height: 25,
-                                width: 25,
+                                height: 18,
+                                width: 18,
                                 alignment: Alignment.center,
                                 decoration: const BoxDecoration(
                                   color: Colors.white,
@@ -1044,7 +1077,7 @@ class _WallPapersState extends State<WallPapers> {
                               //   ),
                               // ),
                               const SizedBox(
-                                width: 26,
+                                width: 30,
                               ),
                               Text(
                                 "Join us on Facebook",
@@ -1052,7 +1085,7 @@ class _WallPapersState extends State<WallPapers> {
                                   fontStyle: FontStyle.normal,
                                   color: Colors.white,
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],

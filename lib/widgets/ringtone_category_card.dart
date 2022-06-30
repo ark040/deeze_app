@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deeze_app/widgets/wallpaper_dispaly.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../models/deeze_model.dart';
@@ -34,8 +35,17 @@ class RingtoneCategoryCard extends StatelessWidget {
               );
             }),
             child: Container(
-              width: screenWidth * 0.4,
+              width: 116.4,
               decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0x01000000),
+                      Color(0x34000000),
+                      Color(0xFF4F4C7E),
+                      Color(0xFF030303),
+                    ]),
                 image: const DecorationImage(
                     image: AssetImage(
                       "assets/no_image.jpg",
@@ -50,8 +60,12 @@ class RingtoneCategoryCard extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Text(
                     name,
-                    style: const TextStyle(
-                      fontSize: 20,
+                    style: GoogleFonts.archivo(
+                      fontStyle: FontStyle.normal,
+                      color: Colors.white,
+                      fontSize: 15,
+                      wordSpacing: 0.19,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -71,16 +85,52 @@ class RingtoneCategoryCard extends StatelessWidget {
               );
             }),
             child: SizedBox(
-              width: screenWidth * 0.4,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: image,
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
+              width: 116.4,
+              child: Stack(
+                children: [
+                  Container(
+                    width: 116.4,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: <Color>[
+                            Color(0x01000000),
+                            Color(0x34000000),
+                            Color(0xFF4F4C7E),
+                            Color(0xFF030303),
+                          ]),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: image,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Text(
+                        name,
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.white,
+                          fontSize: 15,
+                          wordSpacing: 0.19,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

@@ -66,7 +66,7 @@ class _CategoriesState extends State<Categories> {
                           const Icon(
                             Icons.volume_up,
                             color: Colors.white,
-                            size: 30,
+                            size: 25,
                           ),
                           const SizedBox(
                             width: 26,
@@ -76,8 +76,9 @@ class _CategoriesState extends State<Categories> {
                             style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal,
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              wordSpacing: -0.09,
                             ),
                           ),
                         ],
@@ -85,7 +86,7 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   GestureDetector(
                     onTap: () {
@@ -106,7 +107,7 @@ class _CategoriesState extends State<Categories> {
                           const Icon(
                             Icons.wallpaper,
                             color: Colors.white,
-                            size: 30,
+                            size: 25,
                           ),
                           const SizedBox(
                             width: 26,
@@ -116,8 +117,9 @@ class _CategoriesState extends State<Categories> {
                             style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal,
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              wordSpacing: -0.09,
                             ),
                           ),
                         ],
@@ -125,7 +127,7 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
@@ -134,7 +136,7 @@ class _CategoriesState extends State<Categories> {
                         const Icon(
                           Icons.notifications,
                           color: Colors.amber,
-                          size: 30,
+                          size: 25,
                         ),
                         const SizedBox(
                           width: 20,
@@ -146,8 +148,9 @@ class _CategoriesState extends State<Categories> {
                             style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal,
                               color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              wordSpacing: -0.09,
                             ),
                           ),
                         ),
@@ -155,16 +158,16 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 40),
                     child: Row(
                       children: [
                         const Icon(
-                          Icons.heart_broken,
+                          Icons.favorite,
                           color: Colors.white,
-                          size: 30,
+                          size: 25,
                         ),
                         const SizedBox(
                           width: 26,
@@ -174,98 +177,99 @@ class _CategoriesState extends State<Categories> {
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            wordSpacing: -0.09,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
-                  const Divider(
+                  Divider(
                     height: 1,
-                    thickness: 0.9,
-                    color: Colors.white,
+                    thickness: 1,
+                    color: Colors.grey.shade600,
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 40),
+                    padding: const EdgeInsets.only(left: 45),
                     child: Row(
                       children: [
                         const SizedBox(
-                          height: 25,
-                          width: 30,
+                          height: 14,
+                          width: 14,
                           child: Icon(
                             Icons.info,
                             color: Colors.white,
                           ),
                         ),
                         SizedBox(
-                          width: 26,
+                          width: 35,
                         ),
                         Text(
                           "Help",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 40),
+                    padding: const EdgeInsets.only(left: 45),
                     child: Row(
                       children: [
-                        SizedBox(
-                          height: 25,
-                          width: 30,
+                        const SizedBox(
+                          height: 14,
+                          width: 14,
                           child: Icon(
                             Icons.settings,
                             color: Colors.white,
                           ),
                         ),
                         SizedBox(
-                          width: 26,
+                          width: 35,
                         ),
                         Text(
                           "Settings",
                           style: GoogleFonts.archivo(
                             fontStyle: FontStyle.normal,
                             color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 40),
+                    padding: const EdgeInsets.only(left: 45),
                     child: Row(
                       children: [
                         const SizedBox(
-                          height: 25,
-                          width: 30,
+                          height: 14,
+                          width: 14,
                           child: Icon(
                             Icons.privacy_tip,
                             color: Colors.white,
                           ),
                         ),
                         SizedBox(
-                          width: 20,
+                          width: 30,
                         ),
                         Padding(
                           padding: EdgeInsets.all(8.0),
@@ -274,8 +278,8 @@ class _CategoriesState extends State<Categories> {
                             style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal,
                               color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -283,23 +287,23 @@ class _CategoriesState extends State<Categories> {
                     ),
                   ),
                   const SizedBox(
-                    height: 25,
+                    height: 30,
                   ),
-                  const Divider(
+                  Divider(
                     height: 1,
-                    thickness: 0.9,
-                    color: Colors.white,
+                    thickness: 1,
+                    color: Colors.grey.shade600,
                   ),
                   const SizedBox(
                     height: 25,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 45),
+                    padding: const EdgeInsets.only(left: 50),
                     child: Row(
                       children: [
                         Container(
-                          height: 25,
-                          width: 25,
+                          height: 18,
+                          width: 18,
                           alignment: Alignment.center,
                           decoration: const BoxDecoration(
                             color: Colors.white,
@@ -320,7 +324,7 @@ class _CategoriesState extends State<Categories> {
                         //   ),
                         // ),
                         const SizedBox(
-                          width: 26,
+                          width: 30,
                         ),
                         Text(
                           "Join us on Facebook",
@@ -328,7 +332,7 @@ class _CategoriesState extends State<Categories> {
                             fontStyle: FontStyle.normal,
                             color: Colors.white,
                             fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ],
@@ -343,7 +347,17 @@ class _CategoriesState extends State<Categories> {
           backgroundColor: const Color(0xFF4d047d),
           elevation: 0,
           centerTitle: true,
+          leading: Builder(
+            builder: (ctx) {
+              return GestureDetector(
+                  onTap: (() {
+                    Scaffold.of(ctx).openDrawer();
+                  }),
+                  child: Image.asset("assets/menu.png"));
+            },
+          ),
           title: Text("Categories"),
+
           actions: const [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 15),

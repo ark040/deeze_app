@@ -1,10 +1,11 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:deeze_app/widgets/audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/deeze_model.dart';
 
-class RingtonesCard extends StatelessWidget {
+class RingtonesCard extends StatefulWidget {
   final List<HydraMember> listHydra;
   final int index;
   final String ringtoneName;
@@ -18,6 +19,40 @@ class RingtonesCard extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<RingtonesCard> createState() => _RingtonesCardState();
+}
+
+class _RingtonesCardState extends State<RingtonesCard> {
+  final audioPlayer = AudioPlayer();
+
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    liseten();
+  }
+
+  void liseten() async {
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.PLAYING;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    audioPlayer.dispose();
+    isPlaying = false;
+    PlayerState.STOPPED;
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return GestureDetector(
@@ -26,8 +61,8 @@ class RingtonesCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CustomAudioPlayer(
-              listHydra: listHydra,
-              index: index,
+              listHydra: widget.listHydra,
+              index: widget.index,
             ),
           ),
         );
@@ -56,48 +91,64 @@ class RingtonesCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        height: 35,
-                        width: 35,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Color(0xFF798975)),
-                        child: const Icon(
-                          Icons.play_arrow_sharp,
-                          color: Colors.white,
+                      GestureDetector(
+                        onTap: (() async {
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer.play(widget.file);
+                          }
+                        }),
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Color(0xFF798975)),
+                          child: Icon(
+                            isPlaying ? Icons.pause : Icons.play_arrow_sharp,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       const SizedBox(
                         width: 15,
                       ),
                       Text(
-                        ringtoneName,
+                        widget.ringtoneName,
                         style: GoogleFonts.archivo(
                           fontStyle: FontStyle.normal,
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 14,
+                          wordSpacing: -0.07,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
                   ),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        "assets/heart.png",
-                        height: 30,
+                      const Icon(
+                        Icons.favorite_border,
+                        color: Colors.white,
+                        size: 20,
                       ),
                       Row(
                         children: const [
                           Icon(
                             Icons.arrow_downward,
                             color: Colors.white,
-                            size: 15,
+                            size: 11,
                           ),
                           Text(
                             "23k",
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 10,
                               color: Colors.white,
+                              wordSpacing: -0.07,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ],
