@@ -439,12 +439,14 @@ class _CategoriesState extends State<Categories> {
                     itemBuilder: (context, index) {
                       return widget.isRingtone
                           ? RingtoneCategoryCard(
+                              isAllCategory: true,
                               id: state.categories!.hydraMember![index].id!,
                               image:
                                   state.categories?.hydraMember?[index].image,
                               name: state.categories?.hydraMember?[index].name,
                             )
                           : WallpaperCategoryCard(
+                              isAllCategory: true,
                               id: state.categories!.hydraMember![index].id!,
                               image:
                                   state.categories?.hydraMember?[index].image,

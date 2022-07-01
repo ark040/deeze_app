@@ -123,7 +123,7 @@ class _WallpaperByCategoryState extends State<WallpaperByCategory> {
                   centerTitle: true,
                   title: ishow
                       ? SizedBox(
-                          height: 35,
+                          height: 37,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadFormField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -165,13 +165,9 @@ class _WallpaperByCategoryState extends State<WallpaperByCategory> {
                                         ishow = false;
                                       });
                                     }),
-                                    child: const Icon(
-                                      Icons.clear,
-                                      color: Color(0xFF5d318c),
-                                    ),
+                                    child: const Icon(Icons.search,
+                                        color: Color(0xFF5d318c)),
                                   ),
-                                  prefixIcon: const Icon(Icons.search,
-                                      color: Color(0xFF5d318c)),
                                 ),
                               ),
                               itemBuilder: (context, HydraMember? suggestion) {
@@ -342,7 +338,7 @@ class _WallpaperByCategoryState extends State<WallpaperByCategory> {
                   ),
                   title: ishow
                       ? SizedBox(
-                          height: 30,
+                          height: 37,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -385,13 +381,9 @@ class _WallpaperByCategoryState extends State<WallpaperByCategory> {
                                       });
                                     }),
                                     child: const Icon(
-                                      Icons.clear,
+                                      Icons.search,
                                       color: Colors.white,
                                     ),
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search,
-                                    color: Colors.white,
                                   ),
                                 ),
                               ),

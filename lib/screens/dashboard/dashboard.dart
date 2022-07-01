@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:deeze_app/screens/categories/categories.dart';
 import 'package:deeze_app/screens/search/search_screen.dart';
 import 'package:deeze_app/screens/tags/tags.dart';
@@ -27,19 +28,47 @@ class Dashbaord extends StatefulWidget {
 
 class _DashbaordState extends State<Dashbaord> {
   final SearchServices _searchServices = SearchServices();
+
+  final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer pausePlayer = AudioPlayer();
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  Duration pauseDuration = Duration.zero;
+  Duration pausePosition = Duration.zero;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // context.read<RingtoneBloc>().add(LoadRingtone(widget.type));
     context.read<CategoryBloc>().add(LoadCategory());
+    liseten();
+    audioPlayer.onDurationChanged.listen((state) {
+      setState(() {
+        duration = state;
+      });
+    });
+    audioPlayer.onAudioPositionChanged.listen((state) {
+      setState(() {
+        position = state;
+      });
+    });
+  }
+
+  void liseten() async {
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.PLAYING;
+      });
+    });
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    // context.read<DeezeBloc>().close();
+    audioPlayer.dispose();
+    isPlaying = false;
+    PlayerState.STOPPED;
   }
 
   int page = 1;
@@ -98,6 +127,7 @@ class _DashbaordState extends State<Dashbaord> {
 
   final TextEditingController _typeAheadController = TextEditingController();
   bool ishow = false;
+  int? selectedIndex;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -114,7 +144,7 @@ class _DashbaordState extends State<Dashbaord> {
                   centerTitle: true,
                   title: ishow
                       ? SizedBox(
-                          height: 35,
+                          height: 37,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadFormField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -157,12 +187,10 @@ class _DashbaordState extends State<Dashbaord> {
                                       });
                                     }),
                                     child: const Icon(
-                                      Icons.clear,
+                                      Icons.search,
                                       color: Color(0xFF5d318c),
                                     ),
                                   ),
-                                  prefixIcon: const Icon(Icons.search,
-                                      color: Color(0xFF5d318c)),
                                 ),
                               ),
                               itemBuilder: (context, HydraMember? suggestion) {
@@ -172,10 +200,10 @@ class _DashbaordState extends State<Dashbaord> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => SearchScreen(
-                                                searchText:
-                                                    _typeAheadController.text,
-                                              )),
+                                        builder: (context) => SearchScreen(
+                                          searchText: _typeAheadController.text,
+                                        ),
+                                      ),
                                     );
                                   }),
                                   child: Padding(
@@ -185,7 +213,7 @@ class _DashbaordState extends State<Dashbaord> {
                                         "${ringtone.name}",
                                         style: GoogleFonts.archivo(
                                           fontStyle: FontStyle.normal,
-                                          color: Color(0xFF5d318c),
+                                          color: Colors.black,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -424,6 +452,28 @@ class _DashbaordState extends State<Dashbaord> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: RingtonesCard(
+                        onChange: (value) async {
+                          final myposition = Duration(seconds: value.toInt());
+                          await audioPlayer.seek(myposition);
+                          await audioPlayer.resume();
+                        },
+                        onTap: (() async {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer.play(hydraMember[index].file!);
+                          }
+                        }),
+                        audioPlayer:
+                            selectedIndex == index ? audioPlayer : pausePlayer,
+                        isPlaying: selectedIndex == index ? isPlaying : false,
+                        duration:
+                            selectedIndex == index ? duration : pauseDuration,
+                        position:
+                            selectedIndex == index ? position : pausePosition,
                         index: index,
                         listHydra: hydraMember,
                         ringtoneName: hydraMember[index].name!,
@@ -498,13 +548,9 @@ class _DashbaordState extends State<Dashbaord> {
                                       });
                                     }),
                                     child: const Icon(
-                                      Icons.clear,
+                                      Icons.search,
                                       color: Colors.white,
                                     ),
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search,
-                                    color: Colors.white,
                                   ),
                                 ),
                               ),
@@ -821,6 +867,28 @@ class _DashbaordState extends State<Dashbaord> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: RingtonesCard(
+                        onChange: (value) async {
+                          final myposition = Duration(seconds: value.toInt());
+                          await audioPlayer.seek(myposition);
+                          await audioPlayer.resume();
+                        },
+                        onTap: (() async {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer.play(hydraMember[index].file!);
+                          }
+                        }),
+                        audioPlayer:
+                            selectedIndex == index ? audioPlayer : pausePlayer,
+                        isPlaying: selectedIndex == index ? isPlaying : false,
+                        duration:
+                            selectedIndex == index ? duration : pauseDuration,
+                        position:
+                            selectedIndex == index ? position : pausePosition,
                         index: index,
                         listHydra: hydraMember,
                         ringtoneName: hydraMember[index].name!,

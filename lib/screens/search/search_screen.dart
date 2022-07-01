@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -21,6 +22,49 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final SearchServices _searchServices = SearchServices();
+  final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer pausePlayer = AudioPlayer();
+  int? selectedIndex;
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  Duration pauseDuration = Duration.zero;
+  Duration pausePosition = Duration.zero;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    liseten();
+    audioPlayer.onDurationChanged.listen((state) {
+      setState(() {
+        duration = state;
+      });
+    });
+    audioPlayer.onAudioPositionChanged.listen((state) {
+      setState(() {
+        position = state;
+      });
+    });
+  }
+
+  void liseten() async {
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.PLAYING;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    audioPlayer.dispose();
+    isPlaying = false;
+    PlayerState.STOPPED;
+  }
+
   final TextEditingController _typeAheadController = TextEditingController();
   int ringtonePage = 1;
   late int ringtoneTotalPage;
@@ -470,8 +514,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: GridView.builder(
                             itemCount: wallpaperList.length,
                             gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
-                                    maxCrossAxisExtent: 160,
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
                                     childAspectRatio: 3 / 6,
                                     crossAxisSpacing: 10,
                                     mainAxisSpacing: 10),
@@ -515,6 +559,34 @@ class _SearchScreenState extends State<SearchScreen> {
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
                             return RingtonesCard(
+                              onChange: (value) async {
+                                final myposition =
+                                    Duration(seconds: value.toInt());
+                                await audioPlayer.seek(myposition);
+                                await audioPlayer.resume();
+                              },
+                              onTap: (() async {
+                                setState(() {
+                                  selectedIndex = index;
+                                });
+                                if (isPlaying) {
+                                  await audioPlayer.pause();
+                                } else {
+                                  await audioPlayer
+                                      .play(ringtonelist[index].file!);
+                                }
+                              }),
+                              audioPlayer: selectedIndex == index
+                                  ? audioPlayer
+                                  : pausePlayer,
+                              isPlaying:
+                                  selectedIndex == index ? isPlaying : false,
+                              duration: selectedIndex == index
+                                  ? duration
+                                  : pauseDuration,
+                              position: selectedIndex == index
+                                  ? position
+                                  : pausePosition,
                               index: index,
                               listHydra: ringtonelist,
                               ringtoneName: ringtonelist[index].name!,

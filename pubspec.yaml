@@ -40,6 +40,7 @@ dependencies:
   http: ^0.13.4
   flutter_bloc: ^8.0.1
   transparent_image:
+  get: ^4.6.5
   carousel_slider:
   audioplayers: 0.20.1
   ringtone_set: ^0.0.2

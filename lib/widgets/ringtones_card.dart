@@ -12,11 +12,23 @@ class RingtonesCard extends StatefulWidget {
   final int index;
   final String ringtoneName;
   final String file;
-  const RingtonesCard(
+  Duration? duration;
+  Duration? position;
+  final AudioPlayer audioPlayer;
+  bool isPlaying;
+  final VoidCallback onTap;
+  final Function(double) onChange;
+  RingtonesCard(
       {Key? key,
       required this.ringtoneName,
       required this.index,
       required this.file,
+      required this.onTap,
+      required this.onChange,
+      required this.audioPlayer,
+      this.duration,
+      this.isPlaying = false,
+      this.position,
       required this.listHydra})
       : super(key: key);
 
@@ -25,72 +37,44 @@ class RingtonesCard extends StatefulWidget {
 }
 
 class _RingtonesCardState extends State<RingtonesCard> {
-  final audioPlayer = AudioPlayer();
-
-  bool isPlaying = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    liseten();
-    audioPlayer.onDurationChanged.listen((state) {
-      setState(() {
-        duration = state;
-      });
-    });
-    audioPlayer.onAudioPositionChanged.listen((state) {
-      setState(() {
-        position = state;
-      });
-    });
-  }
-
-  void liseten() async {
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.PLAYING;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    audioPlayer.dispose();
-    isPlaying = false;
-    PlayerState.STOPPED;
-  }
-
   List mygradientList = const [
-    LinearGradient(colors: [
-      Color(0xFF279A88),
-      Color(0xFF737B64),
-      Color(0xFF4F4C7E),
-      Color(0xFF4F4C7E),
-    ]),
-    LinearGradient(colors: [
-      Color(0xFF5951B0),
-      Color(0xFF5F5C8C),
-      Color(0xFF4F4C7E),
-      Color(0xFF4F4C7E),
-    ]),
-    LinearGradient(colors: [
-      Color(0xFF5D8998),
-      Color(0xFF4F4C7E),
-      Color(0xFF4F4C7E),
-      Color(0xFF4F4C7E),
-    ]),
-    LinearGradient(colors: [
-      Color(0xFF89C1D3),
-      Color(0xFF5046DE),
-      Color(0xFF4F4C7E),
-      Color(0xFF4F4C7E),
-    ]),
+    LinearGradient(
+        begin: Alignment.centerRight,
+        end: Alignment.centerLeft,
+        colors: [
+          Color(0xFF289987),
+          Color(0xFF727b64),
+        ]),
+    LinearGradient(
+        begin: Alignment.centerRight,
+        end: Alignment.centerLeft,
+        colors: [
+          Color(0xFF5951af),
+          Color(0xFF5f5b8c),
+        ]),
+    LinearGradient(
+        begin: Alignment.centerRight,
+        end: Alignment.centerLeft,
+        colors: [
+          Color(0xFF5d8897),
+          Color(0xFF4f4d7e),
+        ]),
+    LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+          Color(0xFF5048dd),
+          Color(0xFF89c0d3),
+        ]),
+    LinearGradient(
+        begin: Alignment.centerRight,
+        end: Alignment.centerLeft,
+        colors: [
+          Color(0xFF5952af),
+          Color(0xFF5e5b8c),
+        ]),
   ];
-  final _random = new Random();
+  final _random = Random();
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -113,7 +97,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
           thumbShape: SliderComponentShape.noOverlay,
           overlayShape: SliderComponentShape.noOverlay,
           valueIndicatorShape: SliderComponentShape.noOverlay,
-          trackShape: RectangularSliderTrackShape(),
+          trackShape: const RectangularSliderTrackShape(),
         ),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
@@ -130,12 +114,10 @@ class _RingtonesCardState extends State<RingtonesCard> {
                       activeColor: const Color(0xFF4d047d),
                       inactiveColor: Colors.transparent,
                       min: 0,
-                      max: duration.inSeconds.toDouble(),
-                      value: position.inSeconds.toDouble(),
+                      max: widget.duration!.inSeconds.toDouble(),
+                      value: widget.position!.inSeconds.toDouble(),
                       onChanged: (value) async {
-                        final myposition = Duration(seconds: value.toInt());
-                        await audioPlayer.seek(myposition);
-                        await audioPlayer.resume();
+                        widget.onChange(value);
                       }),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -145,13 +127,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: (() async {
-                                if (isPlaying) {
-                                  await audioPlayer.pause();
-                                } else {
-                                  await audioPlayer.play(widget.file);
-                                }
-                              }),
+                              onTap: widget.onTap,
                               child: Container(
                                 height: 45,
                                 width: 45,
@@ -159,7 +135,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
                                 decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Color(0xFF798975)),
-                                child: isPlaying
+                                child: widget.isPlaying
                                     ? Icon(Icons.pause, color: Colors.white)
                                     : Image.asset("assets/Triangle.png"),
                                 // child: Icon(

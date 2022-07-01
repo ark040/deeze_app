@@ -12,10 +12,12 @@ class WallpaperCategoryCard extends StatelessWidget {
   final image;
   final name;
   final int id;
+  final bool isAllCategory;
   const WallpaperCategoryCard({
     Key? key,
     this.image,
     this.name,
+    this.isAllCategory = false,
     required this.id,
   }) : super(key: key);
 
@@ -36,7 +38,7 @@ class WallpaperCategoryCard extends StatelessWidget {
               );
             }),
             child: Container(
-              width: 116.4,
+              width: isAllCategory ? screenWidth : 116.4,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                     begin: Alignment.topCenter,
@@ -86,11 +88,11 @@ class WallpaperCategoryCard extends StatelessWidget {
               );
             }),
             child: SizedBox(
-              width: 116.4,
+              width: isAllCategory ? screenWidth : 116.4,
               child: Stack(
                 children: [
                   Container(
-                    width: 116.4,
+                    width: isAllCategory ? screenWidth : 116.4,
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
