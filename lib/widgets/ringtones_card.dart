@@ -17,6 +17,7 @@ class RingtonesCard extends StatefulWidget {
   final AudioPlayer audioPlayer;
   bool isPlaying;
   final VoidCallback onTap;
+  final VoidCallback onNavigate;
   final Function(double) onChange;
   RingtonesCard(
       {Key? key,
@@ -24,6 +25,7 @@ class RingtonesCard extends StatefulWidget {
       required this.index,
       required this.file,
       required this.onTap,
+      required this.onNavigate,
       required this.onChange,
       required this.audioPlayer,
       this.duration,
@@ -80,17 +82,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
     double screenWidth = MediaQuery.of(context).size.width;
     var element = mygradientList[_random.nextInt(mygradientList.length)];
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CustomAudioPlayer(
-              listHydra: widget.listHydra,
-              index: widget.index,
-            ),
-          ),
-        );
-      },
+      onTap: widget.onNavigate,
       child: SliderTheme(
         data: SliderThemeData(
           trackHeight: 70,

@@ -229,19 +229,22 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
       height: 500,
       child: Stack(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: urlImage,
-              placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+          SizedBox(
+            height: 500,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: urlImage,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
           activeIndex == index
               ? Padding(
-                  padding: const EdgeInsets.only(bottom: 20, right: 10),
+                  padding: const EdgeInsets.only(bottom: 15, right: 10),
                   child: Align(
                       alignment: Alignment.bottomRight,
                       child: Image.asset(
@@ -249,7 +252,7 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
                         height: 35,
                       )),
                 )
-              : SizedBox.shrink()
+              : const SizedBox.shrink()
         ],
       ),
     );

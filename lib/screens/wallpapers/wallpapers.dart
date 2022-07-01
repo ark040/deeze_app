@@ -253,183 +253,200 @@ class _WallPapersState extends State<WallPapers> {
             ),
             backgroundColor: const Color(0xFF4d047d),
             body: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: <Color>[
-                        Color(0xFF4d047d),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                      ]),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 17),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Categories",
-                            style: GoogleFonts.archivo(
-                              fontStyle: FontStyle.normal,
-                              color: Colors.white,
-                              fontSize: 12,
-                              wordSpacing: 0.19,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Categories(
-                                            isRingtone: false,
-                                          )));
-                            },
-                            child: Row(
-                              children: [
-                                Text(
-                                  "View All",
-                                  style: GoogleFonts.archivo(
-                                    fontStyle: FontStyle.normal,
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    wordSpacing: 0.16,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 15,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0xFF4d047d),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                    ]),
+              ),
+              child: SmartRefresher(
+                enablePullUp: true,
+                controller: _refreshController,
+                onRefresh: () async {
+                  final result = await fetchWallpapers(isRefresh: true);
+                  if (result) {
+                    _refreshController.refreshCompleted();
+                  } else {
+                    _refreshController.refreshFailed();
+                  }
+                },
+                onLoading: () async {
+                  final result = await fetchWallpapers();
+                  if (result) {
+                    _refreshController.loadComplete();
+                  } else {
+                    _refreshController.loadFailed();
+                  }
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 17),
+                      sliver: SliverToBoxAdapter(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Categories",
+                              style: GoogleFonts.archivo(
+                                fontStyle: FontStyle.normal,
+                                color: Colors.white,
+                                fontSize: 12,
+                                wordSpacing: 0.19,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Categories(
+                                              isRingtone: false,
+                                            )));
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "View All",
+                                    style: GoogleFonts.archivo(
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      wordSpacing: 0.16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                    SizedBox(
-                      height: 60,
-                      width: screenWidth,
-                      child: BlocConsumer<CategoryBloc, CategoryState>(
-                        listener: (context, state) {
-                          // TODO: implement listener
-                        },
-                        builder: (context, state) {
-                          if (state is CategoryInitial) {
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 60,
+                        width: screenWidth,
+                        child: BlocConsumer<CategoryBloc, CategoryState>(
+                          listener: (context, state) {
+                            // TODO: implement listener
+                          },
+                          builder: (context, state) {
+                            if (state is CategoryInitial) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state is LoadedCategory) {
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 17),
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 4,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: WallpaperCategoryCard(
+                                        id: state.categories!
+                                            .hydraMember![index].id!,
+                                        image: state.categories
+                                            ?.hydraMember?[index].image,
+                                        name: state.categories
+                                            ?.hydraMember?[index].name,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
                             return const Center(
                                 child: CircularProgressIndicator());
-                          }
-                          if (state is LoadedCategory) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 17),
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 4,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: WallpaperCategoryCard(
-                                      id: state
-                                          .categories!.hydraMember![index].id!,
-                                      image: state.categories
-                                          ?.hydraMember?[index].image,
-                                      name: state
-                                          .categories?.hydraMember?[index].name,
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          }
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        },
+                          },
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
+                      ),
                     ),
-                    Padding(
+                    SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 17),
-                      child: Text(
-                        "Popular",
-                        style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal,
-                          color: Colors.white,
-                          fontSize: 15,
+                      sliver: SliverToBoxAdapter(
+                        child: Text(
+                          "Popular",
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 15,
+                      ),
                     ),
-                    SizedBox(height: 33, width: screenWidth, child: Tags()),
-                    const SizedBox(
-                      height: 20,
+                    SliverToBoxAdapter(
+                        child: SizedBox(
+                            height: 33, width: screenWidth, child: Tags())),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 15,
+                      ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: SmartRefresher(
-                          enablePullUp: true,
-                          controller: _refreshController,
-                          onRefresh: () async {
-                            final result =
-                                await fetchWallpapers(isRefresh: true);
-                            if (result) {
-                              _refreshController.refreshCompleted();
-                            } else {
-                              _refreshController.refreshFailed();
-                            }
-                          },
-                          onLoading: () async {
-                            final result = await fetchWallpapers();
-                            if (result) {
-                              _refreshController.loadComplete();
-                            } else {
-                              _refreshController.loadFailed();
-                            }
-                          },
-                          child: GridView.builder(
-                              itemCount: hydraMember.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      childAspectRatio: 3 / 6,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 5),
-                              itemBuilder: (context, index) {
-                                return CategoryCard(
-                                  index: index,
-                                  listHydra: hydraMember,
-                                  image: hydraMember[index].file!,
-                                  name: hydraMember[index].name!,
-                                );
-                              }),
-                        ),
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 5.0,
+                        crossAxisSpacing: 5.0,
+                        childAspectRatio: 3 / 6,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return CategoryCard(
+                            index: index,
+                            listHydra: hydraMember,
+                            image: hydraMember[index].file!,
+                            name: hydraMember[index].name!,
+                          );
+                        },
+                        childCount: hydraMember.length,
                       ),
                     ),
                   ],
-                )),
+                ),
+              ),
+            ),
           )
         : Scaffold(
             appBar: PreferredSize(
@@ -618,183 +635,200 @@ class _WallPapersState extends State<WallPapers> {
             ),
             backgroundColor: const Color(0xFF4d047d),
             body: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: <Color>[
-                        Color(0xFF4d047d),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                        Color(0xFF17131F),
-                      ]),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 17),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Categories",
-                            style: GoogleFonts.archivo(
-                              fontStyle: FontStyle.normal,
-                              color: Colors.white,
-                              fontSize: 12,
-                              wordSpacing: 0.19,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Categories(
-                                            isRingtone: false,
-                                          )));
-                            },
-                            child: Row(
-                              children: [
-                                Text(
-                                  "View All",
-                                  style: GoogleFonts.archivo(
-                                    fontStyle: FontStyle.normal,
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    wordSpacing: 0.16,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                const Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.white,
-                                  size: 15,
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0xFF4d047d),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                    ]),
+              ),
+              child: SmartRefresher(
+                enablePullUp: true,
+                controller: _refreshController,
+                onRefresh: () async {
+                  final result = await fetchWallpapers(isRefresh: true);
+                  if (result) {
+                    _refreshController.refreshCompleted();
+                  } else {
+                    _refreshController.refreshFailed();
+                  }
+                },
+                onLoading: () async {
+                  final result = await fetchWallpapers();
+                  if (result) {
+                    _refreshController.loadComplete();
+                  } else {
+                    _refreshController.loadFailed();
+                  }
+                },
+                child: CustomScrollView(
+                  slivers: [
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 17),
+                      sliver: SliverToBoxAdapter(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Categories",
+                              style: GoogleFonts.archivo(
+                                fontStyle: FontStyle.normal,
+                                color: Colors.white,
+                                fontSize: 12,
+                                wordSpacing: 0.19,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const Categories(
+                                              isRingtone: false,
+                                            )));
+                              },
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "View All",
+                                    style: GoogleFonts.archivo(
+                                      fontStyle: FontStyle.normal,
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      wordSpacing: 0.16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                    SizedBox(
-                      height: 60,
-                      width: screenWidth,
-                      child: BlocConsumer<CategoryBloc, CategoryState>(
-                        listener: (context, state) {
-                          // TODO: implement listener
-                        },
-                        builder: (context, state) {
-                          if (state is CategoryInitial) {
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 60,
+                        width: screenWidth,
+                        child: BlocConsumer<CategoryBloc, CategoryState>(
+                          listener: (context, state) {
+                            // TODO: implement listener
+                          },
+                          builder: (context, state) {
+                            if (state is CategoryInitial) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (state is LoadedCategory) {
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 17),
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 4,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: WallpaperCategoryCard(
+                                        id: state.categories!
+                                            .hydraMember![index].id!,
+                                        image: state.categories
+                                            ?.hydraMember?[index].image,
+                                        name: state.categories
+                                            ?.hydraMember?[index].name,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
                             return const Center(
                                 child: CircularProgressIndicator());
-                          }
-                          if (state is LoadedCategory) {
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 17),
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 4,
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 12),
-                                    child: WallpaperCategoryCard(
-                                      id: state
-                                          .categories!.hydraMember![index].id!,
-                                      image: state.categories
-                                          ?.hydraMember?[index].image,
-                                      name: state
-                                          .categories?.hydraMember?[index].name,
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          }
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        },
+                          },
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20,
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 20,
+                      ),
                     ),
-                    Padding(
+                    SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 17),
-                      child: Text(
-                        "Popular",
-                        style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal,
-                          color: Colors.white,
-                          fontSize: 15,
+                      sliver: SliverToBoxAdapter(
+                        child: Text(
+                          "Popular",
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15,
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 15,
+                      ),
                     ),
-                    SizedBox(height: 33, width: screenWidth, child: Tags()),
-                    const SizedBox(
-                      height: 20,
+                    SliverToBoxAdapter(
+                        child: SizedBox(
+                            height: 33, width: screenWidth, child: Tags())),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 15,
+                      ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
-                        child: SmartRefresher(
-                          enablePullUp: true,
-                          controller: _refreshController,
-                          onRefresh: () async {
-                            final result =
-                                await fetchWallpapers(isRefresh: true);
-                            if (result) {
-                              _refreshController.refreshCompleted();
-                            } else {
-                              _refreshController.refreshFailed();
-                            }
-                          },
-                          onLoading: () async {
-                            final result = await fetchWallpapers();
-                            if (result) {
-                              _refreshController.loadComplete();
-                            } else {
-                              _refreshController.loadFailed();
-                            }
-                          },
-                          child: GridView.builder(
-                              itemCount: hydraMember.length,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      childAspectRatio: 3 / 6,
-                                      crossAxisSpacing: 5,
-                                      mainAxisSpacing: 5),
-                              itemBuilder: (context, index) {
-                                return CategoryCard(
-                                  index: index,
-                                  listHydra: hydraMember,
-                                  image: hydraMember[index].file!,
-                                  name: hydraMember[index].name!,
-                                );
-                              }),
-                        ),
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 5.0,
+                        crossAxisSpacing: 5.0,
+                        childAspectRatio: 3 / 6,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return CategoryCard(
+                            index: index,
+                            listHydra: hydraMember,
+                            image: hydraMember[index].file!,
+                            name: hydraMember[index].name!,
+                          );
+                        },
+                        childCount: hydraMember.length,
                       ),
                     ),
                   ],
-                )),
+                ),
+              ),
+            ),
             drawer: Drawer(
               child: Container(
                 decoration: const BoxDecoration(

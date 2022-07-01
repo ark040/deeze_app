@@ -14,6 +14,7 @@ import '../../models/deeze_model.dart';
 import '../../services/search_services.dart';
 import '../../uitilities/end_points.dart';
 
+import '../../widgets/audio_player.dart';
 import '../../widgets/widgets.dart';
 
 import '../wallpapers/wallpapers.dart';
@@ -452,6 +453,18 @@ class _DashbaordState extends State<Dashbaord> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: RingtonesCard(
+                        onNavigate: () async {
+                          await audioPlayer.pause();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CustomAudioPlayer(
+                                listHydra: hydraMember,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
                         onChange: (value) async {
                           final myposition = Duration(seconds: value.toInt());
                           await audioPlayer.seek(myposition);
@@ -867,6 +880,18 @@ class _DashbaordState extends State<Dashbaord> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: RingtonesCard(
+                        onNavigate: () async {
+                          await audioPlayer.pause();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CustomAudioPlayer(
+                                listHydra: hydraMember,
+                                index: index,
+                              ),
+                            ),
+                          );
+                        },
                         onChange: (value) async {
                           final myposition = Duration(seconds: value.toInt());
                           await audioPlayer.seek(myposition);

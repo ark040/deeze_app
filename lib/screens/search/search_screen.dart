@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import '../../models/deeze_model.dart';
 import '../../services/search_services.dart';
 import '../../uitilities/end_points.dart';
+import '../../widgets/audio_player.dart';
 import '../../widgets/category_card.dart';
 import '../../widgets/ringtones_card.dart';
 
@@ -559,6 +560,18 @@ class _SearchScreenState extends State<SearchScreen> {
                           scrollDirection: Axis.vertical,
                           itemBuilder: (context, index) {
                             return RingtonesCard(
+                              onNavigate: () async {
+                                await audioPlayer.pause();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CustomAudioPlayer(
+                                      listHydra: ringtonelist,
+                                      index: index,
+                                    ),
+                                  ),
+                                );
+                              },
                               onChange: (value) async {
                                 final myposition =
                                     Duration(seconds: value.toInt());
