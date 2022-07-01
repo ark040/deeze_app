@@ -102,100 +102,107 @@ class _RingtonesCardState extends State<RingtonesCard> {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Container(
-              height: 70,
-              width: screenWidth,
-              decoration: BoxDecoration(
-                gradient: element,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Stack(
-                children: [
-                  Slider(
-                      activeColor: const Color(0xFF4d047d),
-                      inactiveColor: Colors.transparent,
-                      min: 0,
-                      max: widget.duration!.inSeconds.toDouble(),
-                      value: widget.position!.inSeconds.toDouble(),
-                      onChanged: (value) async {
-                        widget.onChange(value);
-                      }),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: widget.onTap,
-                              child: Container(
-                                height: 45,
-                                width: 45,
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(0xFF798975)),
-                                child: widget.isPlaying
-                                    ? Icon(Icons.pause, color: Colors.white)
-                                    : Image.asset("assets/Triangle.png"),
-                                // child: Icon(
-                                //   isPlaying ? Icons.pause : Icons.play_arrow_sharp,
-                                //   color: Colors.white,
-                                // ),
-                              ),
+            height: 70,
+            width: screenWidth,
+            decoration: BoxDecoration(
+              gradient: (widget.index % 4 == 0)
+                  ? mygradientList[0]
+                  : (widget.index % 3 == 0)
+                      ? mygradientList[3]
+                      : (widget.index % 2 == 0)
+                          ? mygradientList[4]
+                          : mygradientList[1],
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Stack(
+              children: [
+                Slider(
+                    activeColor: const Color(0xFF4d047d),
+                    inactiveColor: Colors.transparent,
+                    min: 0,
+                    max: widget.duration!.inSeconds.toDouble(),
+                    value: widget.position!.inSeconds.toDouble(),
+                    onChanged: (value) async {
+                      widget.onChange(value);
+                    }),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: widget.onTap,
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              alignment: Alignment.center,
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFF798975)),
+                              child: widget.isPlaying
+                                  ? const Icon(Icons.pause, color: Colors.white)
+                                  : Image.asset("assets/Triangle.png"),
+                              // child: Icon(
+                              //   isPlaying ? Icons.pause : Icons.play_arrow_sharp,
+                              //   color: Colors.white,
+                              // ),
                             ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Text(
-                              widget.ringtoneName,
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 14,
-                                wordSpacing: -0.07,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.favorite_border,
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Text(
+                            widget.ringtoneName,
+                            style: GoogleFonts.archivo(
+                              fontStyle: FontStyle.normal,
                               color: Colors.white,
-                              size: 25,
+                              fontSize: 14,
+                              wordSpacing: -0.07,
+                              fontWeight: FontWeight.w700,
                             ),
-                            SizedBox(
-                              height: 7,
-                            ),
-                            Row(
-                              children: const [
-                                Icon(
-                                  Icons.arrow_downward,
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.favorite_border,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                          SizedBox(
+                            height: 7,
+                          ),
+                          Row(
+                            children: const [
+                              Icon(
+                                Icons.arrow_downward,
+                                color: Colors.white,
+                                size: 11,
+                              ),
+                              Text(
+                                "23k",
+                                style: TextStyle(
+                                  fontSize: 10,
                                   color: Colors.white,
-                                  size: 11,
+                                  wordSpacing: -0.07,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                                Text(
-                                  "23k",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    wordSpacing: -0.07,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
                   ),
-                ],
-              )),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

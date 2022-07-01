@@ -450,7 +450,7 @@ class _DashbaordState extends State<Dashbaord> {
                       );
                     }
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: RingtonesCard(
                         onChange: (value) async {
                           final myposition = Duration(seconds: value.toInt());
@@ -865,7 +865,7 @@ class _DashbaordState extends State<Dashbaord> {
                       );
                     }
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: RingtonesCard(
                         onChange: (value) async {
                           final myposition = Duration(seconds: value.toInt());
@@ -876,6 +876,7 @@ class _DashbaordState extends State<Dashbaord> {
                           setState(() {
                             selectedIndex = index;
                           });
+
                           if (isPlaying) {
                             await audioPlayer.pause();
                           } else {

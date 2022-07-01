@@ -56,6 +56,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
   String myfile = "";
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -124,7 +125,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
               height: 10,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 70),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.18),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -309,6 +310,7 @@ class _BuildPlayState extends State<BuildPlay> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return SliderTheme(
       data: SliderThemeData(
         trackHeight: 272,
@@ -360,7 +362,7 @@ class _BuildPlayState extends State<BuildPlay> {
                       child: Container(
                         height: 88,
                         width: 88,
-                        margin: EdgeInsets.only(left: 65),
+                        margin: EdgeInsets.only(left: screenWidth * 0.2),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: const Color(0xFFa28eac),
