@@ -324,6 +324,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                               return RingtonesCard(
                                 onNavigate: () async {
                                   await audioPlayer.pause();
+                                  // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -387,7 +388,8 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                   leading: Builder(
                     builder: (ctx) {
                       return GestureDetector(
-                          onTap: (() {
+                          onTap: (() async {
+                            await audioPlayer.pause();
                             Scaffold.of(ctx).openDrawer();
                           }),
                           child: Image.asset("assets/menu.png"));

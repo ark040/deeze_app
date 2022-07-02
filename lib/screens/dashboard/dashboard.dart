@@ -510,7 +510,8 @@ class _DashbaordState extends State<Dashbaord> {
                   leading: Builder(
                     builder: (ctx) {
                       return GestureDetector(
-                          onTap: (() {
+                          onTap: (() async {
+                            await audioPlayer.pause();
                             Scaffold.of(ctx).openDrawer();
                           }),
                           child: Image.asset("assets/menu.png"));
@@ -942,7 +943,7 @@ class _DashbaordState extends State<Dashbaord> {
                         height: 40,
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context,
@@ -983,8 +984,9 @@ class _DashbaordState extends State<Dashbaord> {
                         height: 30,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
                             MaterialPageRoute(
