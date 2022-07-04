@@ -145,7 +145,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                   centerTitle: true,
                   title: ishow
                       ? SizedBox(
-                          height: 37,
+                          height: 43,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadFormField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -158,7 +158,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: _typeAheadController,
                                 decoration: InputDecoration(
-                                  hintText: "Search",
+                                  hintText: "",
                                   hintStyle: const TextStyle(
                                     color: Color(0xFF5d318c),
                                     fontSize: 12,
@@ -187,8 +187,8 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                                         ishow = false;
                                       });
                                     }),
-                                    child: const Icon(Icons.search,
-                                        color: Color(0xFF5d318c)),
+                                    child:
+                                        Image.asset("assets/search_field.png"),
                                   ),
                                 ),
                               ),
@@ -264,9 +264,9 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                                 ishow = true;
                               });
                             }),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 15),
-                              child: Icon(Icons.search),
+                              child: Image.asset("assets/search.png"),
                             ),
                           )
                   ],
@@ -321,53 +321,116 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                             itemCount: hydraMember.length,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
-                              return RingtonesCard(
-                                onNavigate: () async {
-                                  await audioPlayer.pause();
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CustomAudioPlayer(
-                                        listHydra: hydraMember,
-                                        index: index,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                onChange: (value) async {
-                                  final myposition =
-                                      Duration(seconds: value.toInt());
-                                  await audioPlayer.seek(myposition);
-                                  await audioPlayer.resume();
-                                },
-                                onTap: (() async {
-                                  setState(() {
-                                    selectedIndex = index;
-                                  });
-                                  if (isPlaying) {
-                                    await audioPlayer.pause();
-                                  } else {
-                                    await audioPlayer
-                                        .play(hydraMember[index].file!);
-                                  }
-                                }),
-                                audioPlayer: selectedIndex == index
-                                    ? audioPlayer
-                                    : pausePlayer,
-                                isPlaying:
-                                    selectedIndex == index ? isPlaying : false,
-                                duration: selectedIndex == index
-                                    ? duration
-                                    : pauseDuration,
-                                position: selectedIndex == index
-                                    ? position
-                                    : pausePosition,
-                                index: index,
-                                listHydra: hydraMember,
-                                ringtoneName: hydraMember[index].name!,
-                                file: hydraMember[index].file!,
-                              );
+                              return selectedIndex == index
+                                  ? RingtonesCard(
+                                      onNavigate: () async {
+                                        await audioPlayer.pause();
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomAudioPlayer(
+                                              listHydra: hydraMember,
+                                              index: index,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onChange: (value) async {
+                                        final myposition =
+                                            Duration(seconds: value.toInt());
+                                        await audioPlayer.seek(myposition);
+                                        await audioPlayer.resume();
+                                      },
+                                      onTap: (() async {
+                                        // if (isPlaying) {
+                                        // } else {}
+
+                                        setState(() {
+                                          selectedIndex = index;
+                                          position = Duration.zero;
+                                        });
+
+                                        if (isPlaying) {
+                                          await audioPlayer.pause();
+                                        } else {
+                                          await audioPlayer
+                                              .play(hydraMember[index].file!);
+                                        }
+                                      }),
+                                      audioPlayer: selectedIndex == index
+                                          ? audioPlayer
+                                          : pausePlayer,
+                                      isPlaying: selectedIndex == index
+                                          ? isPlaying
+                                          : false,
+                                      duration: selectedIndex == index
+                                          ? duration
+                                          : pauseDuration,
+                                      position: selectedIndex == index
+                                          ? position
+                                          : pausePosition,
+                                      index: index,
+                                      listHydra: hydraMember,
+                                      ringtoneName: hydraMember[index].name!,
+                                      file: hydraMember[index].file!,
+                                    )
+                                  : RingtonesCard(
+                                      onNavigate: () async {
+                                        await audioPlayer.pause();
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomAudioPlayer(
+                                              listHydra: hydraMember,
+                                              index: index,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onChange: (value) async {
+                                        final myposition =
+                                            Duration(seconds: value.toInt());
+                                        await audioPlayer.seek(myposition);
+                                        await audioPlayer.resume();
+                                      },
+                                      onTap: (() async {
+                                        // if (isPlaying) {
+                                        // } else {}
+
+                                        setState(() {
+                                          selectedIndex = index;
+                                          position = Duration.zero;
+                                          isPlaying = false;
+                                        });
+                                        await audioPlayer.pause();
+                                        if (isPlaying) {
+                                          await audioPlayer.pause();
+                                        } else {
+                                          await audioPlayer
+                                              .play(hydraMember[index].file!);
+                                        }
+                                      }),
+                                      audioPlayer: selectedIndex == index
+                                          ? audioPlayer
+                                          : pausePlayer,
+                                      isPlaying: selectedIndex == index
+                                          ? isPlaying
+                                          : false,
+                                      duration: selectedIndex == index
+                                          ? duration
+                                          : pauseDuration,
+                                      position: selectedIndex == index
+                                          ? position
+                                          : pausePosition,
+                                      index: index,
+                                      listHydra: hydraMember,
+                                      ringtoneName: hydraMember[index].name!,
+                                      file: hydraMember[index].file!,
+                                    );
                             },
                           ),
                         ),
@@ -397,7 +460,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                   ),
                   title: ishow
                       ? SizedBox(
-                          height: 37,
+                          height: 43,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -410,7 +473,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                               // hideSuggestionsOnKeyboardHide: false,
                               textFieldConfiguration: TextFieldConfiguration(
                                 decoration: InputDecoration(
-                                  hintText: "Search",
+                                  hintText: "",
                                   hintStyle: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -439,12 +502,8 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                                         ishow = false;
                                       });
                                     }),
-                                    child: const Icon(Icons.search,
-                                        color: Color(0xFF5d318c)),
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search,
-                                    color: Colors.white,
+                                    child:
+                                        Image.asset("assets/search_field.png"),
                                   ),
                                 ),
                               ),
@@ -574,9 +633,9 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                                 ishow = true;
                               });
                             }),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 15),
-                              child: Icon(Icons.search),
+                              child: Image.asset("assets/search.png"),
                             ),
                           )
                   ],
@@ -663,52 +722,116 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                             itemCount: hydraMember.length,
                             scrollDirection: Axis.vertical,
                             itemBuilder: (context, index) {
-                              return RingtonesCard(
-                                onNavigate: () async {
-                                  await audioPlayer.pause();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CustomAudioPlayer(
-                                        listHydra: hydraMember,
-                                        index: index,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                onChange: (value) async {
-                                  final myposition =
-                                      Duration(seconds: value.toInt());
-                                  await audioPlayer.seek(myposition);
-                                  await audioPlayer.resume();
-                                },
-                                onTap: (() async {
-                                  setState(() {
-                                    selectedIndex = index;
-                                  });
-                                  if (isPlaying) {
-                                    await audioPlayer.pause();
-                                  } else {
-                                    await audioPlayer
-                                        .play(hydraMember[index].file!);
-                                  }
-                                }),
-                                audioPlayer: selectedIndex == index
-                                    ? audioPlayer
-                                    : pausePlayer,
-                                isPlaying:
-                                    selectedIndex == index ? isPlaying : false,
-                                duration: selectedIndex == index
-                                    ? duration
-                                    : pauseDuration,
-                                position: selectedIndex == index
-                                    ? position
-                                    : pausePosition,
-                                index: index,
-                                listHydra: hydraMember,
-                                ringtoneName: hydraMember[index].name!,
-                                file: hydraMember[index].file!,
-                              );
+                              return selectedIndex == index
+                                  ? RingtonesCard(
+                                      onNavigate: () async {
+                                        await audioPlayer.pause();
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomAudioPlayer(
+                                              listHydra: hydraMember,
+                                              index: index,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onChange: (value) async {
+                                        final myposition =
+                                            Duration(seconds: value.toInt());
+                                        await audioPlayer.seek(myposition);
+                                        await audioPlayer.resume();
+                                      },
+                                      onTap: (() async {
+                                        // if (isPlaying) {
+                                        // } else {}
+
+                                        setState(() {
+                                          selectedIndex = index;
+                                          position = Duration.zero;
+                                        });
+
+                                        if (isPlaying) {
+                                          await audioPlayer.pause();
+                                        } else {
+                                          await audioPlayer
+                                              .play(hydraMember[index].file!);
+                                        }
+                                      }),
+                                      audioPlayer: selectedIndex == index
+                                          ? audioPlayer
+                                          : pausePlayer,
+                                      isPlaying: selectedIndex == index
+                                          ? isPlaying
+                                          : false,
+                                      duration: selectedIndex == index
+                                          ? duration
+                                          : pauseDuration,
+                                      position: selectedIndex == index
+                                          ? position
+                                          : pausePosition,
+                                      index: index,
+                                      listHydra: hydraMember,
+                                      ringtoneName: hydraMember[index].name!,
+                                      file: hydraMember[index].file!,
+                                    )
+                                  : RingtonesCard(
+                                      onNavigate: () async {
+                                        await audioPlayer.pause();
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomAudioPlayer(
+                                              listHydra: hydraMember,
+                                              index: index,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      onChange: (value) async {
+                                        final myposition =
+                                            Duration(seconds: value.toInt());
+                                        await audioPlayer.seek(myposition);
+                                        await audioPlayer.resume();
+                                      },
+                                      onTap: (() async {
+                                        // if (isPlaying) {
+                                        // } else {}
+
+                                        setState(() {
+                                          selectedIndex = index;
+                                          position = Duration.zero;
+                                          isPlaying = false;
+                                        });
+                                        await audioPlayer.pause();
+                                        if (isPlaying) {
+                                          await audioPlayer.pause();
+                                        } else {
+                                          await audioPlayer
+                                              .play(hydraMember[index].file!);
+                                        }
+                                      }),
+                                      audioPlayer: selectedIndex == index
+                                          ? audioPlayer
+                                          : pausePlayer,
+                                      isPlaying: selectedIndex == index
+                                          ? isPlaying
+                                          : false,
+                                      duration: selectedIndex == index
+                                          ? duration
+                                          : pauseDuration,
+                                      position: selectedIndex == index
+                                          ? position
+                                          : pausePosition,
+                                      index: index,
+                                      listHydra: hydraMember,
+                                      ringtoneName: hydraMember[index].name!,
+                                      file: hydraMember[index].file!,
+                                    );
                             },
                           ),
                         ),
@@ -733,7 +856,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         height: 40,
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
                           Navigator.push(
                             context,
@@ -748,11 +871,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                           padding: const EdgeInsets.only(left: 40),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.volume_up,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                              Image.asset("assets/ringtone.png"),
                               const SizedBox(
                                 width: 26,
                               ),
@@ -774,8 +893,9 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         height: 30,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -789,11 +909,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                           padding: const EdgeInsets.only(left: 40),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.wallpaper,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                              Image.asset("assets/wallpapers.png"),
                               const SizedBox(
                                 width: 26,
                               ),
@@ -818,11 +934,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.notifications,
-                              color: Colors.amber,
-                              size: 25,
-                            ),
+                            Image.asset("assets/notification.png"),
                             const SizedBox(
                               width: 20,
                             ),
@@ -849,13 +961,12 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.favorite,
+                            Image.asset(
+                              "assets/heart.png",
                               color: Colors.white,
-                              size: 25,
                             ),
                             const SizedBox(
-                              width: 26,
+                              width: 29,
                             ),
                             Text(
                               "Saved",
@@ -879,22 +990,19 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         color: Colors.grey.shade600,
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.info,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.info,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 35,
+                            const SizedBox(
+                              width: 30,
                             ),
                             Text(
                               "Help",
@@ -909,22 +1017,19 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 35,
+                            const SizedBox(
+                              width: 30,
                             ),
                             Text(
                               "Settings",
@@ -939,25 +1044,22 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.privacy_tip,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.privacy_tip,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 30,
+                            const SizedBox(
+                              width: 25,
                             ),
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 "Privacy Policy",
                                 style: GoogleFonts.archivo(
@@ -972,7 +1074,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Divider(
                         height: 1,
@@ -983,7 +1085,7 @@ class _RingtoneByCategoryState extends State<RingtoneByCategory> {
                         height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 50),
+                        padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
                             Container(

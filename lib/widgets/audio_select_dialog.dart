@@ -120,11 +120,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.ring_volume_rounded,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                        Image.asset("assets/call_down.png"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -182,11 +178,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                        Image.asset("assets/set_notification.png"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -244,11 +236,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.alarm,
-                          color: Colors.black,
-                          size: 20,
-                        ),
+                        Image.asset("assets/alram.png"),
                         const SizedBox(
                           width: 20,
                         ),
@@ -274,11 +262,7 @@ class _AudioSelectDialogState extends State<AudioSelectDialog> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.person,
-                        color: Colors.black,
-                        size: 20,
-                      ),
+                      Image.asset("assets/person.png"),
                       const SizedBox(
                         width: 20,
                       ),

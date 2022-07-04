@@ -50,7 +50,7 @@ class _CategoriesState extends State<Categories> {
                   centerTitle: true,
                   title: ishow
                       ? SizedBox(
-                          height: 37,
+                          height: 43,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadFormField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -63,7 +63,7 @@ class _CategoriesState extends State<Categories> {
                               textFieldConfiguration: TextFieldConfiguration(
                                 controller: _typeAheadController,
                                 decoration: InputDecoration(
-                                  hintText: "Search",
+                                  hintText: "",
                                   hintStyle: const TextStyle(
                                     color: Color(0xFF5d318c),
                                     fontSize: 12,
@@ -92,10 +92,8 @@ class _CategoriesState extends State<Categories> {
                                         ishow = false;
                                       });
                                     }),
-                                    child: const Icon(
-                                      Icons.search,
-                                      color: Color(0xFF5d318c),
-                                    ),
+                                    child:
+                                        Image.asset("assets/search_field.png"),
                                   ),
                                 ),
                               ),
@@ -172,324 +170,12 @@ class _CategoriesState extends State<Categories> {
                                 ishow = true;
                               });
                             }),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 15),
-                              child: Icon(Icons.search),
+                              child: Image.asset("assets/search.png"),
                             ),
                           )
                   ],
-                ),
-              ),
-            ),
-            drawer: Drawer(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color(0xFF252030),
-                  // gradient: const LinearGradient(colors: [
-                  //   Color(0xFF252030),
-                  // ]),
-                  // borderRadius: BorderRadius.circular(10),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      MyDrawerHeader(),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Dashbaord(
-                                type: "RINGTONE",
-                              ),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.volume_up,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              const SizedBox(
-                                width: 26,
-                              ),
-                              Text(
-                                "Ringtones",
-                                style: GoogleFonts.archivo(
-                                  fontStyle: FontStyle.normal,
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  wordSpacing: -0.09,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const WallPapers(
-                                type: "WALLPAPER",
-                              ),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 40),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.wallpaper,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                              const SizedBox(
-                                width: 26,
-                              ),
-                              Text(
-                                "Wallpapers",
-                                style: GoogleFonts.archivo(
-                                  fontStyle: FontStyle.normal,
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  wordSpacing: -0.09,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.notifications,
-                              color: Colors.amber,
-                              size: 25,
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Notifications",
-                                style: GoogleFonts.archivo(
-                                  fontStyle: FontStyle.normal,
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  wordSpacing: -0.09,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 40),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.favorite,
-                              color: Colors.white,
-                              size: 25,
-                            ),
-                            const SizedBox(
-                              width: 26,
-                            ),
-                            Text(
-                              "Saved",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                wordSpacing: -0.09,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey.shade600,
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 45),
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.info,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 35,
-                            ),
-                            Text(
-                              "Help",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 45),
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 35,
-                            ),
-                            Text(
-                              "Settings",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 45),
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.privacy_tip,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 30,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                "Privacy Policy",
-                                style: GoogleFonts.archivo(
-                                  fontStyle: FontStyle.normal,
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey.shade600,
-                      ),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 18,
-                              width: 18,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Image.asset(
-                                "assets/fblogo.png",
-                                color: Colors.black,
-                              ),
-                            ),
-                            // SizedBox(
-                            //   height: 25,
-                            //   width: 30,
-                            //   child: Image.asset(
-                            //     "assets/ringtone.png",
-                            //     color: Colors.white,
-                            //     fit: BoxFit.cover,
-                            //   ),
-                            // ),
-                            const SizedBox(
-                              width: 30,
-                            ),
-                            Text(
-                              "Join us on Facebook",
-                              style: GoogleFonts.archivo(
-                                fontStyle: FontStyle.normal,
-                                color: Colors.white,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -523,11 +209,11 @@ class _CategoriesState extends State<Categories> {
                       return GridView.builder(
                           itemCount: state.categories?.hydraMember?.length,
                           gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 200,
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
                                   childAspectRatio: 3 / 1.2,
-                                  crossAxisSpacing: 20,
-                                  mainAxisSpacing: 20),
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 5),
                           itemBuilder: (context, index) {
                             return widget.isRingtone
                                 ? RingtoneCategoryCard(
@@ -576,7 +262,7 @@ class _CategoriesState extends State<Categories> {
                   ),
                   title: ishow
                       ? SizedBox(
-                          height: 30,
+                          height: 43,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadField<HydraMember?>(
                               suggestionsBoxDecoration:
@@ -589,7 +275,7 @@ class _CategoriesState extends State<Categories> {
                               // hideSuggestionsOnKeyboardHide: false,
                               textFieldConfiguration: TextFieldConfiguration(
                                 decoration: InputDecoration(
-                                  hintText: "Search",
+                                  hintText: "",
                                   hintStyle: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -752,12 +438,75 @@ class _CategoriesState extends State<Categories> {
                                 ishow = true;
                               });
                             }),
-                            child: const Padding(
+                            child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 15),
-                              child: Icon(Icons.search),
+                              child: Image.asset("assets/search.png"),
                             ),
                           )
                   ],
+                ),
+              ),
+            ),
+            backgroundColor: const Color(0xFF4d047d),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0xFF4d047d),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                      Color(0xFF17131F),
+                    ]),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+                child: BlocConsumer<CategoryBloc, CategoryState>(
+                  listener: (context, state) {
+                    // TODO: implement listener
+                  },
+                  builder: (context, state) {
+                    if (state is CategoryInitial) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (state is LoadedCategory) {
+                      return GridView.builder(
+                          itemCount: state.categories?.hydraMember?.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 3 / 1.2,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                          ),
+                          itemBuilder: (context, index) {
+                            return widget.isRingtone
+                                ? RingtoneCategoryCard(
+                                    isAllCategory: true,
+                                    id: state
+                                        .categories!.hydraMember![index].id!,
+                                    image: state
+                                        .categories?.hydraMember?[index].image,
+                                    name: state
+                                        .categories?.hydraMember?[index].name,
+                                  )
+                                : WallpaperCategoryCard(
+                                    isAllCategory: true,
+                                    id: state
+                                        .categories!.hydraMember![index].id!,
+                                    image: state
+                                        .categories?.hydraMember?[index].image,
+                                    name: state
+                                        .categories?.hydraMember?[index].name,
+                                  );
+                          });
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
               ),
             ),
@@ -778,7 +527,7 @@ class _CategoriesState extends State<Categories> {
                         height: 40,
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
                           Navigator.push(
                             context,
@@ -793,11 +542,7 @@ class _CategoriesState extends State<Categories> {
                           padding: const EdgeInsets.only(left: 40),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.volume_up,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                              Image.asset("assets/ringtone.png"),
                               const SizedBox(
                                 width: 26,
                               ),
@@ -819,8 +564,9 @@ class _CategoriesState extends State<Categories> {
                         height: 30,
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -834,11 +580,7 @@ class _CategoriesState extends State<Categories> {
                           padding: const EdgeInsets.only(left: 40),
                           child: Row(
                             children: [
-                              const Icon(
-                                Icons.wallpaper,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                              Image.asset("assets/wallpapers.png"),
                               const SizedBox(
                                 width: 26,
                               ),
@@ -863,11 +605,7 @@ class _CategoriesState extends State<Categories> {
                         padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.notifications,
-                              color: Colors.amber,
-                              size: 25,
-                            ),
+                            Image.asset("assets/notification.png"),
                             const SizedBox(
                               width: 20,
                             ),
@@ -894,13 +632,12 @@ class _CategoriesState extends State<Categories> {
                         padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.favorite,
+                            Image.asset(
+                              "assets/heart.png",
                               color: Colors.white,
-                              size: 25,
                             ),
                             const SizedBox(
-                              width: 26,
+                              width: 29,
                             ),
                             Text(
                               "Saved",
@@ -924,22 +661,19 @@ class _CategoriesState extends State<Categories> {
                         color: Colors.grey.shade600,
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.info,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.info,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 35,
+                            const SizedBox(
+                              width: 30,
                             ),
                             Text(
                               "Help",
@@ -954,22 +688,19 @@ class _CategoriesState extends State<Categories> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 35,
+                            const SizedBox(
+                              width: 30,
                             ),
                             Text(
                               "Settings",
@@ -984,25 +715,22 @@ class _CategoriesState extends State<Categories> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 45),
+                        padding: const EdgeInsets.only(left: 37),
                         child: Row(
                           children: [
-                            const SizedBox(
-                              height: 14,
-                              width: 14,
-                              child: Icon(
-                                Icons.privacy_tip,
-                                color: Colors.white,
-                              ),
+                            Icon(
+                              Icons.privacy_tip,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                            SizedBox(
-                              width: 30,
+                            const SizedBox(
+                              width: 25,
                             ),
                             Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 "Privacy Policy",
                                 style: GoogleFonts.archivo(
@@ -1017,7 +745,7 @@ class _CategoriesState extends State<Categories> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 25,
                       ),
                       Divider(
                         height: 1,
@@ -1028,7 +756,7 @@ class _CategoriesState extends State<Categories> {
                         height: 25,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 50),
+                        padding: const EdgeInsets.only(left: 40),
                         child: Row(
                           children: [
                             Container(
@@ -1070,68 +798,6 @@ class _CategoriesState extends State<Categories> {
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-            backgroundColor: const Color(0xFF4d047d),
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: <Color>[
-                      Color(0xFF4d047d),
-                      Color(0xFF17131F),
-                      Color(0xFF17131F),
-                      Color(0xFF17131F),
-                      Color(0xFF17131F),
-                      Color(0xFF17131F),
-                      Color(0xFF17131F),
-                    ]),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-                child: BlocConsumer<CategoryBloc, CategoryState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    if (state is CategoryInitial) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (state is LoadedCategory) {
-                      return GridView.builder(
-                          itemCount: state.categories?.hydraMember?.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent: 200,
-                                  childAspectRatio: 3 / 1.2,
-                                  crossAxisSpacing: 20,
-                                  mainAxisSpacing: 20),
-                          itemBuilder: (context, index) {
-                            return widget.isRingtone
-                                ? RingtoneCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  )
-                                : WallpaperCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  );
-                          });
-                    }
-                    return const Center(child: CircularProgressIndicator());
-                  },
                 ),
               ),
             ),

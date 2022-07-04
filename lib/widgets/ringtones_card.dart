@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:deeze_app/widgets/audio_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/deeze_model.dart';
@@ -109,14 +110,15 @@ class _RingtonesCardState extends State<RingtonesCard> {
             child: Stack(
               children: [
                 Slider(
-                    activeColor: const Color(0xFF4d047d),
-                    inactiveColor: Colors.transparent,
-                    min: 0,
-                    max: widget.duration!.inSeconds.toDouble(),
-                    value: widget.position!.inSeconds.toDouble(),
-                    onChanged: (value) async {
-                      widget.onChange(value);
-                    }),
+                  activeColor: Colors.white12,
+                  inactiveColor: Colors.transparent,
+                  min: 0,
+                  max: widget.duration!.inMicroseconds.toDouble(),
+                  value: widget.position!.inMicroseconds.toDouble(),
+                  onChanged: (value) async {
+                    widget.onChange(value);
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -126,21 +128,15 @@ class _RingtonesCardState extends State<RingtonesCard> {
                         children: [
                           GestureDetector(
                             onTap: widget.onTap,
-                            child: Container(
-                              height: 45,
-                              width: 45,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xFF798975)),
-                              child: widget.isPlaying
-                                  ? const Icon(Icons.pause, color: Colors.white)
-                                  : Image.asset("assets/Triangle.png"),
-                              // child: Icon(
-                              //   isPlaying ? Icons.pause : Icons.play_arrow_sharp,
-                              //   color: Colors.white,
-                              // ),
-                            ),
+                            child: widget.isPlaying
+                                ? SvgPicture.asset(
+                                    "assets/pause.svg",
+                                    height: 50,
+                                  )
+                                : SvgPicture.asset(
+                                    "assets/play.svg",
+                                    height: 50,
+                                  ),
                           ),
                           const SizedBox(
                             width: 15,

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,9 +22,12 @@ import 'more_audio_dialog.dart';
 class CustomAudioPlayer extends StatefulWidget {
   final List<HydraMember> listHydra;
   final int index;
-  const CustomAudioPlayer(
-      {Key? key, required this.listHydra, required this.index})
-      : super(key: key);
+
+  CustomAudioPlayer({
+    Key? key,
+    required this.listHydra,
+    required this.index,
+  }) : super(key: key);
 
   @override
   State<CustomAudioPlayer> createState() => _CustomAudioPlayerState();
@@ -37,19 +41,44 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
         duration: Duration(milliseconds: 100),
         curve: Curves.linear,
       );
+
+  final AudioPlayer audioPlayer = AudioPlayer();
+  final AudioPlayer pausePlayer = AudioPlayer();
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+  Duration pauseDuration = Duration.zero;
+  Duration pausePosition = Duration.zero;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => animateToSilde(widget.index));
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlaying = state == PlayerState.PLAYING;
+      });
+    });
+    audioPlayer.onDurationChanged.listen((state) {
+      setState(() {
+        duration = state;
+      });
+    });
+    audioPlayer.onAudioPositionChanged.listen((state) {
+      setState(() {
+        position = state;
+      });
+    });
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    audioPlayer.dispose();
+    isPlaying = false;
+    PlayerState.STOPPED;
   }
 
   late int activeIndex = widget.index;
@@ -99,14 +128,73 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                 // myfile = index == 0
                 //     ? widget.listHydra[0].file!
                 //     : widget.listHydra[index - 1].file!;
-                return BuildPlay(
-                  activeIndex: activeIndex,
-                  file: file!,
-                  index: index,
-                  name: name!,
-                  userName: widget.listHydra[index].user!.firstName!,
-                  userProfileUrl: widget.listHydra[index].user!.image,
-                );
+                return activeIndex == index
+                    ? BuildPlay(
+                        onChange: (value) async {
+                          final myposition = Duration(seconds: value.toInt());
+                          await audioPlayer.seek(myposition);
+                          await audioPlayer.resume();
+                        },
+                        onTap: (() async {
+                          // if (isPlaying) {
+                          // } else {}
+
+                          setState(() {
+                            position = Duration.zero;
+                          });
+                          await audioPlayer.pause();
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer
+                                .play(widget.listHydra[index].file!);
+                          }
+                        }),
+                        audioPlayer:
+                            activeIndex == index ? audioPlayer : pausePlayer,
+                        isPlaying: activeIndex == index ? isPlaying : false,
+                        duration:
+                            activeIndex == index ? duration : pauseDuration,
+                        position:
+                            activeIndex == index ? position : pausePosition,
+                        activeIndex: activeIndex,
+                        file: file!,
+                        index: index,
+                        name: name!,
+                        userName: widget.listHydra[index].user!.firstName!,
+                        userProfileUrl: widget.listHydra[index].user!.image,
+                      )
+                    : BuildPlay(
+                        onChange: (value) async {
+                          final myposition = Duration(seconds: value.toInt());
+                          await audioPlayer.seek(myposition);
+                          await audioPlayer.resume();
+                        },
+                        onTap: (() async {
+                          // if (isPlaying) {
+                          // } else {}
+
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer
+                                .play(widget.listHydra[index].file!);
+                          }
+                        }),
+                        audioPlayer:
+                            activeIndex == index ? audioPlayer : pausePlayer,
+                        isPlaying: activeIndex == index ? isPlaying : false,
+                        duration:
+                            activeIndex == index ? duration : pauseDuration,
+                        position:
+                            activeIndex == index ? position : pausePosition,
+                        activeIndex: activeIndex,
+                        file: file!,
+                        index: index,
+                        name: name!,
+                        userName: widget.listHydra[index].user!.firstName!,
+                        userProfileUrl: widget.listHydra[index].user!.image,
+                      );
               },
               options: CarouselOptions(
                   height: 272,
@@ -114,8 +202,15 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                   viewportFraction: 0.73,
                   enlargeCenterPage: true,
                   enableInfiniteScroll: false,
-                  onPageChanged: (index, reason) {
+                  onPageChanged: (index, reason) async {
+                    if (isPlaying) {
+                      await audioPlayer.pause();
+                      await audioPlayer.play(widget.listHydra[index].file!);
+                    } else {
+                      await audioPlayer.pause();
+                    }
                     setState(() {
+                      position = Duration.zero;
                       myfile = widget.listHydra[index].file!;
                       activeIndex = index;
                     });
@@ -251,8 +346,21 @@ class BuildPlay extends StatefulWidget {
   final String? userProfileUrl;
   final int index;
   final int activeIndex;
-  const BuildPlay(
+  Duration? duration;
+  Duration? position;
+  final AudioPlayer audioPlayer;
+  bool isPlaying;
+  final VoidCallback onTap;
+
+  final Function(double) onChange;
+  BuildPlay(
       {Key? key,
+      this.duration,
+      this.position,
+      required this.audioPlayer,
+      required this.isPlaying,
+      required this.onTap,
+      required this.onChange,
       required this.file,
       required this.name,
       required this.index,
@@ -266,48 +374,6 @@ class BuildPlay extends StatefulWidget {
 }
 
 class _BuildPlayState extends State<BuildPlay> {
-  final audioPlayer = AudioPlayer();
-
-  bool isPlaying = false;
-
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    liseten();
-    audioPlayer.onDurationChanged.listen((state) {
-      setState(() {
-        duration = state;
-      });
-    });
-    audioPlayer.onAudioPositionChanged.listen((state) {
-      setState(() {
-        position = state;
-      });
-    });
-  }
-
-  void liseten() async {
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.PLAYING;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    audioPlayer.dispose();
-    isPlaying = false;
-    PlayerState.STOPPED;
-  }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -333,77 +399,59 @@ class _BuildPlayState extends State<BuildPlay> {
         ),
         child: Stack(
           children: [
-            Slider(
-                activeColor: const Color(0xFF4d047d),
-                inactiveColor: Colors.transparent,
-                min: 0,
-                max: duration.inSeconds.toDouble(),
-                value: position.inSeconds.toDouble(),
-                onChanged: (value) async {
-                  final myposition = Duration(seconds: value.toInt());
-                  await audioPlayer.seek(myposition);
-                  await audioPlayer.resume();
-                }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (() async {
-                        if (isPlaying) {
-                          await audioPlayer.pause();
-                        } else {
-                          await audioPlayer.play(widget.file);
-                        }
-                      }),
-                      child: Container(
-                        height: 88,
-                        width: 88,
-                        margin: EdgeInsets.only(left: screenWidth * 0.2),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFa28eac),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey),
-                        ),
-                        child: Icon(
-                          isPlaying ? Icons.pause : Icons.play_arrow_sharp,
-                          color: Colors.white,
-                          size: 35,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  height: double.infinity,
-                  width: 61,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: <Color>[
-                          Color(0xFF9a83a6),
-                          Color(0xFF93b4bb),
-                        ]),
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(6),
-                      bottomRight: Radius.circular(6),
-                    ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                height: double.infinity,
+                width: 61,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        Color(0xFF9a83a6),
+                        Color(0xFF93b4bb),
+                      ]),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(6),
+                    bottomRight: Radius.circular(6),
                   ),
-                  child: widget.activeIndex == widget.index
-                      ? Padding(
-                          padding: const EdgeInsets.only(bottom: 15, right: 15),
-                          child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: Image.asset("assets/image_heart.png")),
-                        )
-                      : SizedBox.shrink(),
-                )
-              ],
+                ),
+                child: widget.activeIndex == widget.index
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 15, right: 15),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Image.asset("assets/image_heart.png"),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ),
+            Slider(
+              activeColor: Colors.white12,
+              inactiveColor: Colors.transparent,
+              min: 0,
+              max: widget.duration!.inMicroseconds.toDouble(),
+              value: widget.position!.inMicroseconds.toDouble(),
+              onChanged: (value) async {
+                widget.onChange(value);
+              },
+            ),
+            GestureDetector(
+              onTap: widget.onTap,
+              child: Align(
+                alignment: Alignment.center,
+                child: widget.isPlaying
+                    ? SvgPicture.asset(
+                        "assets/pause.svg",
+                        height: 90,
+                      )
+                    : SvgPicture.asset(
+                        "assets/play.svg",
+                        height: 90,
+                      ),
+              ),
             ),
           ],
         ),

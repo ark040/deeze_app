@@ -236,8 +236,6 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
               child: CachedNetworkImage(
                 fit: BoxFit.cover,
                 imageUrl: urlImage,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
