@@ -63,10 +63,7 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: NetworkImage(
-                file,
-              ),
-              fit: BoxFit.cover),
+              image: CachedNetworkImageProvider(file), fit: BoxFit.cover),
           gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,

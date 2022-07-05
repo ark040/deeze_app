@@ -73,7 +73,8 @@ class _TagsState extends State<Tags> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return SmartRefresher(
-      enablePullUp: true,
+      scrollDirection: Axis.horizontal,
+      enablePullUp: false,
       controller: _refreshController,
       onRefresh: () async {
         final result = await fetchtags(isRefresh: true);

@@ -131,7 +131,8 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                 return activeIndex == index
                     ? BuildPlay(
                         onChange: (value) async {
-                          final myposition = Duration(seconds: value.toInt());
+                          final myposition =
+                              Duration(microseconds: value.toInt());
                           await audioPlayer.seek(myposition);
                           await audioPlayer.resume();
                         },
@@ -166,7 +167,8 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                       )
                     : BuildPlay(
                         onChange: (value) async {
-                          final myposition = Duration(seconds: value.toInt());
+                          final myposition =
+                              Duration(microseconds: value.toInt());
                           await audioPlayer.seek(myposition);
                           await audioPlayer.resume();
                         },
@@ -262,7 +264,7 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                           size: 13,
                         ),
                         Text(
-                          "23k",
+                          "0k",
                           style: GoogleFonts.archivo(
                               fontStyle: FontStyle.normal, color: Colors.white),
                         ),
@@ -311,16 +313,12 @@ class _CustomAudioPlayerState extends State<CustomAudioPlayer> {
                         });
                   },
                   child: Container(
-                    height: 43,
-                    width: 43,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.white),
-                    child: const Icon(
-                      Icons.phone_callback,
-                      size: 25,
-                    ),
-                  ),
+                      height: 43,
+                      width: 43,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.white),
+                      child: Image.asset("assets/call.png")),
                 ),
                 const SizedBox(
                   width: 50,
@@ -435,7 +433,7 @@ class _BuildPlayState extends State<BuildPlay> {
               max: widget.duration!.inMicroseconds.toDouble(),
               value: widget.position!.inMicroseconds.toDouble(),
               onChanged: (value) async {
-                widget.onChange(value);
+                // widget.onChange(value);
               },
             ),
             GestureDetector(

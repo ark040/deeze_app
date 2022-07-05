@@ -123,6 +123,7 @@ class _WallPapersState extends State<WallPapers> {
                           height: 43,
                           width: MediaQuery.of(context).size.width,
                           child: TypeAheadFormField<HydraMember?>(
+                              suggestionsBoxVerticalOffset: 0,
                               suggestionsBoxDecoration:
                                   const SuggestionsBoxDecoration(
                                       color: Colors.white),
@@ -145,8 +146,9 @@ class _WallPapersState extends State<WallPapers> {
                                     horizontal: 20,
                                   ),
                                   focusedBorder: const OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7)),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(7),
+                                        topRight: Radius.circular(7)),
                                     borderSide: BorderSide(
                                         color: Color(0xFF5d318c), width: 0),
                                   ),
@@ -414,8 +416,12 @@ class _WallPapersState extends State<WallPapers> {
                       ),
                     ),
                     SliverToBoxAdapter(
-                        child: SizedBox(
-                            height: 33, width: screenWidth, child: Tags())),
+                      child: SizedBox(
+                        height: 33,
+                        width: screenWidth,
+                        child: Tags(),
+                      ),
+                    ),
                     const SliverToBoxAdapter(
                       child: SizedBox(
                         height: 15,

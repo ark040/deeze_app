@@ -196,6 +196,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 height: 43,
                 width: MediaQuery.of(context).size.width,
                 child: TypeAheadFormField<HydraMember?>(
+                    suggestionsBoxVerticalOffset: 0,
                     suggestionsBoxDecoration:
                         const SuggestionsBoxDecoration(color: Colors.white),
                     suggestionsCallback: _searchServices.search,
@@ -215,8 +216,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           vertical: 5,
                           horizontal: 20,
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(7),
+                              topRight: Radius.circular(7)),
                           borderSide:
                               BorderSide(color: Color(0xFF5d318c), width: 0),
                         ),

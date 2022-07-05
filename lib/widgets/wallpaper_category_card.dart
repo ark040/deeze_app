@@ -93,21 +93,24 @@ class WallpaperCategoryCard extends StatelessWidget {
                 children: [
                   Container(
                     width: isAllCategory ? screenWidth : 116.4,
-                    decoration: const BoxDecoration(
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
                       gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: <Color>[
-                            Color(0x01000000),
-                            Color(0x34000000),
-                            Color(0xFF4F4C7E),
-                            Color(0xFF030303),
-                          ]),
+                        colors: [
+                          Colors.white10,
+                          Colors.white10,
+                          Colors.black38,
+                          Color(0xFF030303),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0, 0.1, 0.6, 1],
+                      ),
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: CachedNetworkImage(
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         imageUrl: image,
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.error),

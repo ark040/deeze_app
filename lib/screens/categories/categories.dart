@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:http/http.dart' as http;
 import '../../bloc/deeze_bloc/Category_bloc/category_bloc.dart';
-import '../../bloc/deeze_bloc/ringtone_bloc.dart';
-import '../../bloc/deeze_bloc/ringtone_state.dart';
-import '../../models/deeze_model.dart';
+import '../../models/deeze_model.dart' as deeze;
+import '../../models/categories.dart';
 import '../../services/search_services.dart';
+import '../../uitilities/end_points.dart';
 import '../../widgets/ringtone_category_card.dart';
 import '../../widgets/wallpaper_category_card.dart';
 import '../../widgets/widgets.dart';
@@ -28,12 +29,63 @@ class _CategoriesState extends State<Categories> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<CategoryBloc>().add(LoadCategory());
   }
 
   final SearchServices _searchServices = SearchServices();
   final TextEditingController _typeAheadController = TextEditingController();
   bool ishow = false;
+  int page = 1;
+  late int totalPage;
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: true);
+
+  List<HydraMember> hydraMember = [];
+  Future<bool> fetchCategories({bool isRefresh = false}) async {
+    if (isRefresh) {
+      page = 1;
+    } else {
+      if (page >= totalPage) {
+        _refreshController.loadNoData();
+        return false;
+      }
+    }
+
+    var url = getCategoriesUrl;
+
+    Uri uri = Uri.parse(url).replace(queryParameters: {
+      "page": "$page",
+      "itemsPerPage": "20",
+    });
+    try {
+      http.Response response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        var rawResponse = categoriesFromJson(response.body);
+        if (isRefresh) {
+          hydraMember = rawResponse.hydraMember!;
+        } else {
+          hydraMember.addAll(rawResponse.hydraMember!);
+        }
+
+        page++;
+        totalPage = rawResponse.hydraTotalItems!;
+        setState(() {});
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -52,7 +104,8 @@ class _CategoriesState extends State<Categories> {
                       ? SizedBox(
                           height: 43,
                           width: MediaQuery.of(context).size.width,
-                          child: TypeAheadFormField<HydraMember?>(
+                          child: TypeAheadFormField<deeze.HydraMember?>(
+                              suggestionsBoxVerticalOffset: 0,
                               suggestionsBoxDecoration:
                                   const SuggestionsBoxDecoration(
                                       color: Colors.white),
@@ -75,8 +128,9 @@ class _CategoriesState extends State<Categories> {
                                     horizontal: 20,
                                   ),
                                   focusedBorder: const OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(7)),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(7),
+                                        topRight: Radius.circular(7)),
                                     borderSide: BorderSide(
                                         color: Color(0xFF5d318c), width: 0),
                                   ),
@@ -97,7 +151,8 @@ class _CategoriesState extends State<Categories> {
                                   ),
                                 ),
                               ),
-                              itemBuilder: (context, HydraMember? suggestion) {
+                              itemBuilder:
+                                  (context, deeze.HydraMember? suggestion) {
                                 final ringtone = suggestion!;
                                 return GestureDetector(
                                   onTap: (() {
@@ -125,7 +180,7 @@ class _CategoriesState extends State<Categories> {
                                 );
                               },
                               onSuggestionSelected:
-                                  (HydraMember? suggestion) {},
+                                  (deeze.HydraMember? suggestion) {},
                               noItemsFoundBuilder: (context) => Center(
                                     child: Text(
                                       "No Found",
@@ -197,47 +252,48 @@ class _CategoriesState extends State<Categories> {
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-                child: BlocConsumer<CategoryBloc, CategoryState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    if (state is CategoryInitial) {
-                      return const Center(child: CircularProgressIndicator());
+                child: SmartRefresher(
+                  enablePullUp: true,
+                  controller: _refreshController,
+                  onRefresh: () async {
+                    final result = await fetchCategories(isRefresh: true);
+                    if (result) {
+                      _refreshController.refreshCompleted();
+                    } else {
+                      _refreshController.refreshFailed();
                     }
-                    if (state is LoadedCategory) {
-                      return GridView.builder(
-                          itemCount: state.categories?.hydraMember?.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 3 / 1.2,
-                                  crossAxisSpacing: 5,
-                                  mainAxisSpacing: 5),
-                          itemBuilder: (context, index) {
-                            return widget.isRingtone
-                                ? RingtoneCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  )
-                                : WallpaperCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  );
-                          });
-                    }
-                    return const Center(child: CircularProgressIndicator());
                   },
+                  onLoading: () async {
+                    final result = await fetchCategories();
+                    if (result) {
+                      _refreshController.loadComplete();
+                    } else {
+                      _refreshController.loadFailed();
+                    }
+                  },
+                  child: GridView.builder(
+                      itemCount: hydraMember.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 3 / 1.2,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5),
+                      itemBuilder: (context, index) {
+                        return widget.isRingtone
+                            ? RingtoneCategoryCard(
+                                isAllCategory: true,
+                                id: hydraMember[index].id!,
+                                image: hydraMember[index].image!,
+                                name: hydraMember[index].name,
+                              )
+                            : WallpaperCategoryCard(
+                                isAllCategory: true,
+                                id: hydraMember[index].id!,
+                                image: hydraMember[index].image,
+                                name: hydraMember[index].name,
+                              );
+                      }),
                 ),
               ),
             ),
@@ -264,7 +320,7 @@ class _CategoriesState extends State<Categories> {
                       ? SizedBox(
                           height: 43,
                           width: MediaQuery.of(context).size.width,
-                          child: TypeAheadField<HydraMember?>(
+                          child: TypeAheadField<deeze.HydraMember?>(
                               suggestionsBoxDecoration:
                                   const SuggestionsBoxDecoration(
                                       color: Color(0xFF4d047d)),
@@ -311,7 +367,8 @@ class _CategoriesState extends State<Categories> {
                                   ),
                                 ),
                               ),
-                              itemBuilder: (context, HydraMember? suggestion) {
+                              itemBuilder:
+                                  (context, deeze.HydraMember? suggestion) {
                                 final ringtone = suggestion!;
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 20),
@@ -397,7 +454,7 @@ class _CategoriesState extends State<Categories> {
                                 );
                               },
                               onSuggestionSelected:
-                                  (HydraMember? suggestion) {},
+                                  (deeze.HydraMember? suggestion) {},
                               noItemsFoundBuilder: (context) => const Center(
                                     child: Text(
                                       "No Found",
@@ -465,48 +522,48 @@ class _CategoriesState extends State<Categories> {
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-                child: BlocConsumer<CategoryBloc, CategoryState>(
-                  listener: (context, state) {
-                    // TODO: implement listener
-                  },
-                  builder: (context, state) {
-                    if (state is CategoryInitial) {
-                      return const Center(child: CircularProgressIndicator());
+                child: SmartRefresher(
+                  enablePullUp: true,
+                  controller: _refreshController,
+                  onRefresh: () async {
+                    final result = await fetchCategories(isRefresh: true);
+                    if (result) {
+                      _refreshController.refreshCompleted();
+                    } else {
+                      _refreshController.refreshFailed();
                     }
-                    if (state is LoadedCategory) {
-                      return GridView.builder(
-                          itemCount: state.categories?.hydraMember?.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 3 / 1.2,
-                            crossAxisSpacing: 5,
-                            mainAxisSpacing: 5,
-                          ),
-                          itemBuilder: (context, index) {
-                            return widget.isRingtone
-                                ? RingtoneCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  )
-                                : WallpaperCategoryCard(
-                                    isAllCategory: true,
-                                    id: state
-                                        .categories!.hydraMember![index].id!,
-                                    image: state
-                                        .categories?.hydraMember?[index].image,
-                                    name: state
-                                        .categories?.hydraMember?[index].name,
-                                  );
-                          });
-                    }
-                    return const Center(child: CircularProgressIndicator());
                   },
+                  onLoading: () async {
+                    final result = await fetchCategories();
+                    if (result) {
+                      _refreshController.loadComplete();
+                    } else {
+                      _refreshController.loadFailed();
+                    }
+                  },
+                  child: GridView.builder(
+                      itemCount: hydraMember.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 3 / 1.2,
+                              crossAxisSpacing: 5,
+                              mainAxisSpacing: 5),
+                      itemBuilder: (context, index) {
+                        return widget.isRingtone
+                            ? RingtoneCategoryCard(
+                                isAllCategory: true,
+                                id: hydraMember[index].id!,
+                                image: hydraMember[index].image!,
+                                name: hydraMember[index].name,
+                              )
+                            : WallpaperCategoryCard(
+                                isAllCategory: true,
+                                id: hydraMember[index].id!,
+                                image: hydraMember[index].image,
+                                name: hydraMember[index].name,
+                              );
+                      }),
                 ),
               ),
             ),

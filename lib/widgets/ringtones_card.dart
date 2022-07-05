@@ -116,7 +116,7 @@ class _RingtonesCardState extends State<RingtonesCard> {
                   max: widget.duration!.inMicroseconds.toDouble(),
                   value: widget.position!.inMicroseconds.toDouble(),
                   onChanged: (value) async {
-                    widget.onChange(value);
+                    // widget.onChange(value);
                   },
                 ),
                 Padding(
