@@ -275,10 +275,11 @@ class _CategoriesState extends State<Categories> {
                       itemCount: hydraMember.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 3 / 1.2,
-                              crossAxisSpacing: 5,
-                              mainAxisSpacing: 5),
+                        crossAxisCount: 2,
+                        childAspectRatio: 3 / 1.5,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 14,
+                      ),
                       itemBuilder: (context, index) {
                         return widget.isRingtone
                             ? RingtoneCategoryCard(
@@ -545,10 +546,11 @@ class _CategoriesState extends State<Categories> {
                       itemCount: hydraMember.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 3 / 1.2,
-                              crossAxisSpacing: 5,
-                              mainAxisSpacing: 5),
+                        crossAxisCount: 2,
+                        childAspectRatio: 3 / 1.5,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 14,
+                      ),
                       itemBuilder: (context, index) {
                         return widget.isRingtone
                             ? RingtoneCategoryCard(

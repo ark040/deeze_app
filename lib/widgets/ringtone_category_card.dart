@@ -53,7 +53,7 @@ class RingtoneCategoryCard extends StatelessWidget {
                       "assets/no_image.jpg",
                     ),
                     fit: BoxFit.fill),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Align(
                 alignment: Alignment.bottomLeft,
@@ -93,7 +93,7 @@ class RingtoneCategoryCard extends StatelessWidget {
                   Container(
                     width: isAllCategory ? screenWidth : 116.4,
                     foregroundDecoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       gradient: LinearGradient(
                         colors: [
                           Colors.white10,
@@ -107,7 +107,7 @@ class RingtoneCategoryCard extends StatelessWidget {
                       ),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       child: CachedNetworkImage(
                         fit: BoxFit.cover,
                         imageUrl: image,
