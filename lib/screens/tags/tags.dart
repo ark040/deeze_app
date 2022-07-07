@@ -73,7 +73,7 @@ class _TagsState extends State<Tags> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return SmartRefresher(
-      scrollDirection: Axis.horizontal,
+      scrollDirection: Axis.vertical,
       enablePullUp: false,
       controller: _refreshController,
       onRefresh: () async {
@@ -100,25 +100,28 @@ class _TagsState extends State<Tags> {
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade600, width: 2),
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Text(
-                    hydraMember[index].name!,
-                    style: GoogleFonts.archivo(
-                      fontStyle: FontStyle.normal,
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+              child: hydraMember.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.grey.shade600, width: 2),
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Text(
+                          hydraMember[index].name!,
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             );
           },
         ),

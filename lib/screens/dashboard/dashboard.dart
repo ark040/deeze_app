@@ -4,6 +4,7 @@ import 'package:deeze_app/screens/search/search_screen.dart';
 import 'package:deeze_app/screens/tags/tags.dart';
 import 'package:deeze_app/widgets/ringtone_category_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -445,10 +446,7 @@ class _DashbaordState extends State<Dashbaord> {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                SizedBox(
-                                    height: 33,
-                                    width: screenWidth,
-                                    child: const Tags()),
+                                const Tags(),
                                 const SizedBox(
                                   height: 30,
                                 ),
@@ -676,10 +674,9 @@ class _DashbaordState extends State<Dashbaord> {
                                                     alignment: Alignment.center,
                                                     decoration:
                                                         const BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: Color(
-                                                                0xFF798975)),
+                                                      shape: BoxShape.circle,
+                                                      color: Color(0xFF798975),
+                                                    ),
                                                     child: const Icon(
                                                       Icons.play_arrow_sharp,
                                                       color: Colors.white,
@@ -771,7 +768,8 @@ class _DashbaordState extends State<Dashbaord> {
                                 });
                               }),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
                                 child: Image.asset("assets/search.png"),
                               ),
                             )
@@ -1227,7 +1225,7 @@ class _DashbaordState extends State<Dashbaord> {
                           padding: const EdgeInsets.only(left: 37),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.info,
                                 color: Colors.white,
                                 size: 20,
@@ -1254,7 +1252,7 @@ class _DashbaordState extends State<Dashbaord> {
                           padding: const EdgeInsets.only(left: 37),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.settings,
                                 color: Colors.white,
                                 size: 20,
@@ -1281,7 +1279,7 @@ class _DashbaordState extends State<Dashbaord> {
                           padding: const EdgeInsets.only(left: 37),
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.privacy_tip,
                                 color: Colors.white,
                                 size: 20,
@@ -1368,21 +1366,21 @@ class _DashbaordState extends State<Dashbaord> {
   Future<bool> _onWillPop() async {
     return (await showDialog(
           context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
+          builder: (context) => AlertDialog(
+            title: const Text('Are you sure?'),
+            content: const Text('Do you want to exit an App'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
+                child: const Text('No'),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  SystemNavigator.pop();
                   audioPlayer.pause();
                   audioPlayer.dispose();
                 },
-                child: new Text('Yes'),
+                child: const Text('Yes'),
               ),
             ],
           ),
