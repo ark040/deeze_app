@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'dart:ui';
+import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ringtone_set/ringtone_set.dart';
 
 import '../models/deeze_model.dart';
 
@@ -29,6 +29,7 @@ class WallPaperSlider extends StatefulWidget {
 
 class _WallPaperSliderState extends State<WallPaperSlider> {
   final CarouselController _controller = CarouselController();
+  late int activeIndex = widget.index!;
   String file = "";
   animateToSilde(int index) => _controller.animateToPage(
         index,
@@ -41,15 +42,29 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
     super.initState();
     WidgetsBinding.instance
         .addPostFrameCallback((timeStamp) => animateToSilde(widget.index!));
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) => loadData());
+  }
+
+  Future loadData() async {
+    await Future.wait(widget.listHydra!
+        .map((urlImage) => cacheImage(context, urlImage.file!))
+        .toList());
+  }
+
+  Future cacheImage(BuildContext context, String urlImage) async {
+    return precacheImage(CachedNetworkImageProvider(urlImage), context);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(file);
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: CachedNetworkImageProvider(file), fit: BoxFit.cover),
+          gradient: const LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
@@ -61,73 +76,141 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
                 Color(0xFF17131f),
               ]),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CarouselSlider.builder(
-              carouselController: _controller,
-              itemCount: widget.listHydra?.length,
-              itemBuilder: (context, index, realIndex) {
-                final urlImage = widget.listHydra![index].file!;
-                file = index == 0
-                    ? widget.listHydra![0].file!
-                    : widget.listHydra![index - 1].file!;
-                return buildImage(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CarouselSlider.builder(
+                carouselController: _controller,
+                itemCount: widget.listHydra?.length,
+                itemBuilder: (context, index, realIndex) {
+                  final urlImage = widget.listHydra![index].file!;
+
+                  // file = index == 0
+                  //     ? widget.listHydra![0].file!
+                  //     : widget.listHydra![index - 1].file!;
+                  return buildImage(
                     urlImage: urlImage,
                     index: index,
                     userName: widget.listHydra![index].user!.firstName!,
-                    userProfileUrl: widget.listHydra![index].user!.image);
-              },
-              options: CarouselOptions(
-                height: 600,
-                enableInfiniteScroll: false,
-                pageSnapping: true,
-                enlargeCenterPage: true,
+                    userProfileUrl: widget.listHydra![index].user!.image,
+                  );
+                },
+                options: CarouselOptions(
+                    height: 500,
+                    viewportFraction: 0.7,
+                    enableInfiniteScroll: false,
+                    pageSnapping: true,
+                    enlargeCenterPage: true,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        file = widget.listHydra![index].file!;
+                        activeIndex = index;
+                      });
+                    }),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) {
-                          return WallpaperSelectDialog(file: file);
-                        });
-                  },
-                  child: const Icon(
+              const SizedBox(
+                height: 10,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 57),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        widget.listHydra?[activeIndex].user?.image != null
+                            ? CircleAvatar(
+                                radius: 15,
+                                backgroundImage: NetworkImage(
+                                  widget.listHydra![activeIndex].user!.image!,
+                                ),
+                              )
+                            : const CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 15,
+                              ),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          "${widget.listHydra![activeIndex].user!.firstName!}",
+                          style: GoogleFonts.archivo(
+                            fontStyle: FontStyle.normal,
+                            color: Colors.white,
+                            fontSize: 15,
+                            wordSpacing: -0.05,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
+                            size: 13,
+                          ),
+                          Text(
+                            "23k",
+                            style: GoogleFonts.archivo(
+                                fontStyle: FontStyle.normal,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
                     Icons.more_horiz,
-                    color: Colors.white,
+                    color: Colors.grey,
                     size: 30,
                   ),
-                ),
-                const SizedBox(
-                  width: 70,
-                ),
-                Container(
-                  height: 37,
-                  width: 37,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                  child: const Icon(
-                    Icons.add_call,
-                    size: 18,
+                  const SizedBox(
+                    width: 60,
                   ),
-                ),
-                const SizedBox(
-                  width: 70,
-                ),
-                const Icon(
-                  Icons.share_outlined,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ],
-            ),
-          ],
+                  GestureDetector(
+                    onTap: () {
+                      showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) {
+                            return WallpaperSelectDialog(file: file);
+                          });
+                    },
+                    child: Container(
+                      height: 43,
+                      width: 43,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.white),
+                      child: Image.asset("assets/save_wall.png"),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 60,
+                  ),
+                  const Icon(
+                    Icons.share_outlined,
+                    color: Colors.grey,
+                    size: 25,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -139,77 +222,34 @@ class _WallPaperSliderState extends State<WallPaperSlider> {
     required String userName,
     String? userProfileUrl,
   }) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.only(right: 10),
-          width: double.infinity,
-          height: 450,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: CachedNetworkImage(
-              fit: BoxFit.cover,
-              imageUrl: urlImage,
-              placeholder: (context, url) =>
-                  const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+    return SizedBox(
+      height: 500,
+      child: Stack(
+        children: [
+          SizedBox(
+            height: 500,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: urlImage,
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  userProfileUrl != null
-                      ? CircleAvatar(
-                          radius: 15,
-                          backgroundImage: NetworkImage(userProfileUrl),
-                        )
-                      : const CircleAvatar(
-                          backgroundColor: Colors.grey,
-                          radius: 15,
-                        ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    userName,
-                    style: GoogleFonts.archivo(
-                      fontStyle: FontStyle.normal,
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 5),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.arrow_downward,
-                      color: Colors.white,
-                      size: 13,
-                    ),
-                    Text(
-                      "23k",
-                      style: GoogleFonts.archivo(
-                          fontStyle: FontStyle.normal, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+          activeIndex == index
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 15, right: 10),
+                  child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Image.asset(
+                        "assets/image_heart.png",
+                        height: 35,
+                      )),
+                )
+              : const SizedBox.shrink()
+        ],
+      ),
     );
   }
 }
@@ -295,241 +335,271 @@ class _WallpaperSelectDialogState extends State<WallpaperSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Card(
-          elevation: 10,
-          shape: RoundedRectangleBorder(
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          height: 292,
+          width: 306,
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
           ),
-          child: Container(
-            height: 340,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 30,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 28,
+                ),
+                child: GestureDetector(
+                  onTap: (() {
+                    Navigator.of(context).pop();
+                  }),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.grey,
+                    size: 30,
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      final isSucces = await setWallpaper();
-                      if (isSucces) {
-                        Fluttertoast.showToast(
-                          msg: "Wallpaper succesfully Updated!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: const Color(0xFF7209b7),
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.wallpaper,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET WALLPAPER",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      final isSucces = await setLockWallpaper();
-                      if (isSucces) {
-                        Fluttertoast.showToast(
-                          msg: "Wallpaper succesfully Updated!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: const Color(0xFF7209b7),
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.lock,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET LOCK SCREEN",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      final isSucces = await setBothScreenWallpaper();
-                      if (isSucces) {
-                        Fluttertoast.showToast(
-                          msg: "Wallpaper succesfully Updated!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: const Color(0xFF7209b7),
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.phonelink_lock_rounded,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "SET BOTH",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      ProgressDialog pd = ProgressDialog(
-                        context,
-                        message: Text(
-                          "Please Wait!",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                      pd.show();
-                      final sucess = await downloadFile(widget.file);
-                      var snackBar;
-                      if (sucess) {
-                        print("sucess");
-                        Fluttertoast.showToast(
-                          msg: "Wallpaper succesfully Downloaded",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: const Color(0xFF7209b7),
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: Container(
-                        height: 37,
-                        // margin: EdgeInsets.only(left: 20),
-                        width: MediaQuery.of(context).size.width * 0.58,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: <Color>[
-                                Color(0xFF7209b7),
-                                Color(0xFF5c3fcc),
-                              ]),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "SAVE TO MEDIA",
-                          style: GoogleFonts.archivo(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        )),
-                  ),
-                ],
+              SizedBox(
+                height: 20,
               ),
-            ),
+              GestureDetector(
+                onTap: () async {
+                  ProgressDialog pd = ProgressDialog(
+                    context,
+                    message: Text(
+                      "Please Wait!",
+                      style: GoogleFonts.archivo(
+                        fontStyle: FontStyle.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                  pd.show();
+                  final isSucces = await setWallpaper();
+                  if (isSucces) {
+                    Fluttertoast.showToast(
+                      msg: "Wallpaper succesfully Updated!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: const Color(0xFF7209b7),
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 35,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.wallpaper,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "SET WALLPAPER",
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 22,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  ProgressDialog pd = ProgressDialog(
+                    context,
+                    message: Text(
+                      "Please Wait!",
+                      style: GoogleFonts.archivo(
+                        fontStyle: FontStyle.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                  pd.show();
+                  final isSucces = await setLockWallpaper();
+                  if (isSucces) {
+                    Fluttertoast.showToast(
+                      msg: "Wallpaper succesfully Updated!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: const Color(0xFF7209b7),
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 35,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.lock,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "SET LOCK SCREEN",
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 22,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  ProgressDialog pd = ProgressDialog(
+                    context,
+                    message: Text(
+                      "Please Wait!",
+                      style: GoogleFonts.archivo(
+                        fontStyle: FontStyle.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                  pd.show();
+                  final isSucces = await setBothScreenWallpaper();
+                  if (isSucces) {
+                    Fluttertoast.showToast(
+                      msg: "Wallpaper succesfully Updated!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: const Color(0xFF7209b7),
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 35,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.phonelink_lock_rounded,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "SET BOTH",
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              InkWell(
+                onTap: () async {
+                  ProgressDialog pd = ProgressDialog(
+                    context,
+                    message: Text(
+                      "Please Wait!",
+                      style: GoogleFonts.archivo(
+                        fontStyle: FontStyle.normal,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                  pd.show();
+                  final sucess = await downloadFile(widget.file);
+                  var snackBar;
+                  if (sucess) {
+                    print("sucess");
+                    Fluttertoast.showToast(
+                      msg: "Wallpaper succesfully Downloaded",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: const Color(0xFF7209b7),
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 35,
+                  ),
+                  child: Container(
+                      height: 36,
+                      // margin: EdgeInsets.only(left: 20),
+                      width: 179,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: <Color>[
+                              Color(0xFF7209b7),
+                              Color(0xFF5c3fcc),
+                            ]),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "SAVE TO MEDIA",
+                        style: GoogleFonts.archivo(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )),
+                ),
+              ),
+            ],
           ),
         ),
       ),

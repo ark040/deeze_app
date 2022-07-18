@@ -32,7 +32,7 @@ class CategoryCard extends StatelessWidget {
                     "assets/no_image.jpg",
                   ),
                   fit: BoxFit.fill),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Align(
               alignment: Alignment.bottomLeft,
@@ -65,12 +65,10 @@ class CategoryCard extends StatelessWidget {
             child: SizedBox(
               width: screenWidth * 0.4,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: image,
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),

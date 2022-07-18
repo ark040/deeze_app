@@ -40,8 +40,10 @@ dependencies:
   http: ^0.13.4
   flutter_bloc: ^8.0.1
   transparent_image:
+  get: ^4.6.5
   carousel_slider:
   audioplayers: 0.20.1
+  flutter_svg: ^1.1.1+1
   ringtone_set: ^0.0.2
   flutter_wallpaper_manager: ^0.0.3
   dio: ^4.0.6
@@ -65,6 +67,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
