@@ -21,11 +21,12 @@ class _LoginState extends State<Login> {
               end: Alignment.bottomCenter,
               colors: <Color>[
                 Color(0xFF4d047d),
-                Color(0xFF050000),
-                Color(0xFF050000),
-                Color(0xFF050000),
-                Color(0xFF000000),
-                Color(0xFF000000),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
+                Color(0xFF17131F),
               ]),
         ),
         child: Padding(

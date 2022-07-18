@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../screens/screens.dart';
 import 'elevated_button_widget.dart';
 
 class MyDrawerHeader extends StatefulWidget {
@@ -44,7 +45,10 @@ class _MyDrawerHeaderState extends State<MyDrawerHeader> {
                   padding: 0,
                   borderRadius: 15,
                   borderColor: Colors.white,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (contex) => Login()));
+                  },
                 ),
               ),
             ],
